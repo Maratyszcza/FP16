@@ -13,19 +13,22 @@ def main(args):
 
     with build.options(source_dir="test", extra_include_dirs="test", deps=build.deps.googletest):
         fp16_tables = build.cxx("tables.cc")
-        build.unittest("ieee-from-fp32-value",
-            [build.cxx("ieee-from-fp32-value.cc"), fp16_tables])
         build.unittest("ieee-to-fp32-bits",
             [build.cxx("ieee-to-fp32-bits.cc"), fp16_tables])
         build.unittest("ieee-to-fp32-value",
             [build.cxx("ieee-to-fp32-value.cc"), fp16_tables])
 
-        build.unittest("alt-from-fp32-value",
-            [build.cxx("alt-from-fp32-value.cc"), fp16_tables])
         build.unittest("alt-to-fp32-bits",
             [build.cxx("alt-to-fp32-bits.cc"), fp16_tables])
         build.unittest("alt-to-fp32-value",
             [build.cxx("alt-to-fp32-value.cc"), fp16_tables])
+
+        build.unittest("ieee-from-fp32-value",
+            [build.cxx("ieee-from-fp32-value.cc"), fp16_tables])
+        build.unittest("alt-from-fp32-value",
+            [build.cxx("alt-from-fp32-value.cc"), fp16_tables])
+
+        build.unittest("bitcasts", build.cxx("bitcasts.cc"))
 
     with build.options(source_dir="bench", deps=build.deps.googlebenchmark):
         build.benchmark("ieee-bench", build.cxx("ieee.cc"))
