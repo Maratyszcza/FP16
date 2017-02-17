@@ -30,6 +30,9 @@ def main(args):
         build.unittest("ieee-to-fp32-psimd", build.cxx("ieee-to-fp32-psimd.cc"))
         build.unittest("alt-to-fp32-psimd", build.cxx("alt-to-fp32-psimd.cc"))
 
+        build.unittest("ieee-to-fp32x2-psimd", build.cxx("ieee-to-fp32x2-psimd.cc"))
+        build.unittest("alt-to-fp32x2-psimd", build.cxx("alt-to-fp32x2-psimd.cc"))
+
         build.unittest("bitcasts", build.cxx("bitcasts.cc"))
 
     with build.options(source_dir="bench", deps=[build.deps.googlebenchmark, build.deps.psimd]):
