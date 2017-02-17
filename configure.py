@@ -27,11 +27,12 @@ def main(args):
         build.unittest("alt-from-fp32-value",
             [build.cxx("alt-from-fp32-value.cc"), fp16_tables])
 
-        build.unittest("ieee-to-fp32-psimd", build.cxx("ieee-to-fp32-psimd.cc"))
-        build.unittest("alt-to-fp32-psimd", build.cxx("alt-to-fp32-psimd.cc"))
+        if not build.target.is_emscripten:
+            build.unittest("ieee-to-fp32-psimd", build.cxx("ieee-to-fp32-psimd.cc"))
+            build.unittest("alt-to-fp32-psimd", build.cxx("alt-to-fp32-psimd.cc"))
 
-        build.unittest("ieee-to-fp32x2-psimd", build.cxx("ieee-to-fp32x2-psimd.cc"))
-        build.unittest("alt-to-fp32x2-psimd", build.cxx("alt-to-fp32x2-psimd.cc"))
+            build.unittest("ieee-to-fp32x2-psimd", build.cxx("ieee-to-fp32x2-psimd.cc"))
+            build.unittest("alt-to-fp32x2-psimd", build.cxx("alt-to-fp32x2-psimd.cc"))
 
         build.unittest("bitcasts", build.cxx("bitcasts.cc"))
 
