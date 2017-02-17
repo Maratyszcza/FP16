@@ -4,8 +4,9 @@
 #include <fp16/psimd.h>
 
 #if (defined(__i386__) || defined(__x86_64__)) && defined(__F16C__)
-	#include <x86intrin.h>
+	#include <immintrin.h>
 #endif
+
 
 static void fp16_ieee_to_fp32_bits(benchmark::State& state) {
 	uint16_t fp16 = UINT16_C(0x7C00);

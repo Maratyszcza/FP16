@@ -33,8 +33,11 @@ def main(args):
         build.unittest("bitcasts", build.cxx("bitcasts.cc"))
 
     with build.options(source_dir="bench", deps=[build.deps.googlebenchmark, build.deps.psimd]):
-        build.benchmark("ieee-bench", build.cxx("ieee.cc"))
-        build.benchmark("alt-bench", build.cxx("alt.cc"))
+        build.benchmark("ieee-element-bench", build.cxx("ieee-element.cc"))
+        build.benchmark("alt-element-bench", build.cxx("alt-element.cc"))
+
+        build.benchmark("ieee-array-bench", build.cxx("ieee-array.cc"))
+        build.benchmark("alt-array-bench", build.cxx("alt-array.cc"))
 
     return build
 
