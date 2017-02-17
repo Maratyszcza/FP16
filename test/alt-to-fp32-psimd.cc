@@ -3,7 +3,6 @@
 #include <cstdint>
 
 #include <fp16.h>
-#include <fp16/psimd.h>
 
 
 TEST(FP16_ALT_TO_FP32_PSIMD, positive_normalized_values) {

@@ -1,7 +1,6 @@
 #include <benchmark/benchmark.h>
 
 #include <fp16.h>
-#include <fp16/psimd.h>
 
 static void fp16_alt_to_fp32_bits(benchmark::State& state) {
 	uint16_t fp16 = UINT16_C(0x7C00);

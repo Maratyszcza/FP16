@@ -9,6 +9,7 @@
 	#include <x86intrin.h>
 #endif
 
+
 TEST(FP16_ALT_FROM_FP32_VALUE, normalized_powers_of_2) {
 	const uint16_t min_po2_f16   = UINT16_C(0x0400);
 	const uint16_t eighths_f16   = UINT16_C(0x3000);

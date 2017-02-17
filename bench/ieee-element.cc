@@ -1,7 +1,6 @@
 #include <benchmark/benchmark.h>
 
 #include <fp16.h>
-#include <fp16/psimd.h>
 
 #if (defined(__i386__) || defined(__x86_64__)) && defined(__F16C__)
 	#include <immintrin.h>

@@ -1,7 +1,6 @@
 #include <benchmark/benchmark.h>
 
 #include <fp16.h>
-#include <fp16/psimd.h>
 
 #include <vector>
 #include <random>

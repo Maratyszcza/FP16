@@ -4,10 +4,8 @@
 
 #if defined(__cplusplus) && (__cplusplus >= 201103L)
 	#include <cstdint>
-	#include <cmath>
 #elif !defined(__OPENCL_VERSION__)
 	#include <stdint.h>
-	#include <math.h>
 #endif
 
 #include <psimd.h>
