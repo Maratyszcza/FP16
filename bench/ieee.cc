@@ -1,6 +1,7 @@
 #include <benchmark/benchmark.h>
 
 #include <fp16.h>
+#include <fp16/psimd.h>
 
 #if (defined(__i386__) || defined(__x86_64__)) && defined(__F16C__)
 	#include <x86intrin.h>
@@ -23,6 +24,17 @@ static void fp16_ieee_to_fp32_value(benchmark::State& state) {
 	}
 }
 BENCHMARK(fp16_ieee_to_fp32_value);
+
+static void fp16_ieee_to_fp32_psimd(benchmark::State& state) {
+	psimd_u16 fp16 = (psimd_u16) { 0x7C00, 0x7C01, 0x7C02, 0x7C03 };;
+	const psimd_u16 increment = psimd_splat_u16(4);
+	while (state.KeepRunning()) {
+		const psimd_f32 fp32 = fp16_ieee_to_fp32_psimd(fp16);
+		fp16 += increment;
+		benchmark::DoNotOptimize(fp32);
+	}
+}
+BENCHMARK(fp16_ieee_to_fp32_psimd);
 
 static void fp16_ieee_from_fp32_value(benchmark::State& state) {
 	uint32_t fp32 = UINT32_C(0x7F800000);
