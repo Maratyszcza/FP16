@@ -3,7 +3,8 @@
 
 import confu
 parser = confu.standard_parser("FP16 configuration script")
-
+parser.add_argument("--compare", dest="compare", action="store_true",
+    help="Enable performance comparison with other half-precision implementations")
 
 def main(args):
     options = parser.parse_args(args)
@@ -36,12 +37,18 @@ def main(args):
 
         build.unittest("bitcasts", build.cxx("bitcasts.cc"))
 
-    with build.options(source_dir="bench", deps=[build.deps.googlebenchmark, build.deps.psimd]):
+    with build.options(source_dir="bench", extra_include_dirs=".",
+            macros="FP16_COMPARATIVE_BENCHMARKS" if options.compare else None,
+            deps=[build.deps.googlebenchmark, build.deps.psimd]):
+
         build.benchmark("ieee-element-bench", build.cxx("ieee-element.cc"))
         build.benchmark("alt-element-bench", build.cxx("alt-element.cc"))
 
-        build.benchmark("ieee-array-bench", build.cxx("ieee-array.cc"))
-        build.benchmark("alt-array-bench", build.cxx("alt-array.cc"))
+        build.benchmark("from-ieee-array-bench", build.cxx("from-ieee-array.cc"))
+        build.benchmark("from-alt-array-bench", build.cxx("from-alt-array.cc"))
+
+        build.benchmark("to-ieee-array-bench", build.cxx("to-ieee-array.cc"))
+        build.benchmark("to-alt-array-bench", build.cxx("to-alt-array.cc"))
 
     return build
 
