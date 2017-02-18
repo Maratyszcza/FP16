@@ -16,10 +16,11 @@
 #endif
 
 #ifdef FP16_COMPARATIVE_BENCHMARKS
-	#include <third-party/float16-compressor.h>
 	#include <third-party/THHalf.h>
-	#include <third-party/half.hpp>
 	#include <third-party/npy-halffloat.h>
+	#include <third-party/eigen-half.h>
+	#include <third-party/float16-compressor.h>
+	#include <third-party/half.hpp>
 #endif
 
 
@@ -213,6 +214,33 @@ BENCHMARK(fp16_ieee_to_fp32_value)->RangeMultiplier(2)->Range(1<<10, 64<<20);
 		state.SetItemsProcessed(int64_t(state.iterations()) * int64_t(state.range(0)));
 	}
 	BENCHMARK(npy_halfbits_to_floatbits)->RangeMultiplier(2)->Range(1<<10, 64<<20);
+
+	static void Eigen_half_to_float(benchmark::State& state) {
+		const uint_fast32_t seed = std::chrono::system_clock::now().time_since_epoch().count();
+		auto rng = std::bind(std::uniform_real_distribution<float>(-1.0f, 1.0f), std::mt19937(seed));
+
+		std::vector<uint16_t> fp16(state.range(0));
+		std::vector<float> fp32(state.range(0));
+		std::generate(fp16.begin(), fp16.end(),
+			[&rng]{ return fp16_ieee_from_fp32_value(rng()); });
+
+		while (state.KeepRunning()) {
+			uint16_t* input = fp16.data();
+			benchmark::DoNotOptimize(input);
+
+			float* output = fp32.data();
+			const size_t n = state.range(0);
+			for (size_t i = 0; i < n; i++) {
+				output[i] =
+					Eigen::half_impl::half_to_float(
+						Eigen::half_impl::raw_uint16_to_half(input[i]));
+			}
+
+			benchmark::DoNotOptimize(output);
+		}
+		state.SetItemsProcessed(int64_t(state.iterations()) * int64_t(state.range(0)));
+	}
+	BENCHMARK(Eigen_half_to_float)->RangeMultiplier(2)->Range(1<<10, 64<<20);
 
 	static void Float16Compressor_decompress(benchmark::State& state) {
 		const uint_fast32_t seed = std::chrono::system_clock::now().time_since_epoch().count();
