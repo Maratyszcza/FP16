@@ -141,7 +141,8 @@ BENCHMARK(fp16_ieee_to_fp32_value);
 		uint16_t fp16 = UINT16_C(0x7C00);
 		while (state.KeepRunning()) {
 			const float fp32 =
-				half_float::detail::half2float_impl(fp16, std::true_type());
+				half_float::detail::half2float_impl(fp16,
+					half_float::detail::true_type());
 
 			fp16 = next_xorshift16(fp16);
 			benchmark::DoNotOptimize(fp32);
@@ -153,7 +154,8 @@ BENCHMARK(fp16_ieee_to_fp32_value);
 		uint16_t fp16 = UINT16_C(0x7C00);
 		while (state.KeepRunning()) {
 			const float fp32 =
-				half_float::detail::half2float_impl(fp16, std::false_type());
+				half_float::detail::half2float_impl(fp16,
+					half_float::detail::false_type());
 
 			fp16 = next_xorshift16(fp16);
 			benchmark::DoNotOptimize(fp32);
@@ -243,7 +245,8 @@ BENCHMARK(fp16_ieee_from_fp32_value);
 		while (state.KeepRunning()) {
 			const uint16_t fp16 =
 				half_float::detail::float2half_impl<std::round_to_nearest>(
-					fp32_from_bits(fp32), std::true_type());
+					fp32_from_bits(fp32),
+						half_float::detail::true_type());
 
 			fp32 = next_xorshift32(fp32);
 			benchmark::DoNotOptimize(fp16);
@@ -256,7 +259,8 @@ BENCHMARK(fp16_ieee_from_fp32_value);
 		while (state.KeepRunning()) {
 			const uint16_t fp16 =
 				half_float::detail::float2half_impl<std::round_to_nearest>(
-					fp32_from_bits(fp32), std::false_type());
+					fp32_from_bits(fp32),
+						half_float::detail::false_type());
 
 			fp32 = next_xorshift32(fp32);
 			benchmark::DoNotOptimize(fp16);

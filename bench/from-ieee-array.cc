@@ -283,7 +283,8 @@ BENCHMARK(fp16_ieee_to_fp32_value)->RangeMultiplier(2)->Range(1<<10, 64<<20);
 			float* output = fp32.data();
 			const size_t n = state.range(0);
 			for (size_t i = 0; i < n; i++) {
-				output[i] = half_float::detail::half2float_impl(input[i], std::true_type());
+				output[i] = half_float::detail::half2float_impl(input[i],
+					half_float::detail::true_type());
 			}
 
 			benchmark::DoNotOptimize(output);
@@ -308,7 +309,8 @@ BENCHMARK(fp16_ieee_to_fp32_value)->RangeMultiplier(2)->Range(1<<10, 64<<20);
 			float* output = fp32.data();
 			const size_t n = state.range(0);
 			for (size_t i = 0; i < n; i++) {
-				output[i] = half_float::detail::half2float_impl(input[i], std::false_type());
+				output[i] = half_float::detail::half2float_impl(input[i],
+					half_float::detail::false_type());
 			}
 
 			benchmark::DoNotOptimize(output);

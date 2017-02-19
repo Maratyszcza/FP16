@@ -216,7 +216,7 @@ BENCHMARK(fp16_ieee_from_fp32_value)->RangeMultiplier(2)->Range(1<<10, 64<<20);
 			for (size_t i = 0; i < n; i++) {
 				output[i] =
 					half_float::detail::float2half_impl<std::round_to_nearest>(
-						input[i], std::true_type());
+						input[i], half_float::detail::true_type());
 			}
 
 			benchmark::DoNotOptimize(output);
@@ -242,7 +242,7 @@ BENCHMARK(fp16_ieee_from_fp32_value)->RangeMultiplier(2)->Range(1<<10, 64<<20);
 			for (size_t i = 0; i < n; i++) {
 				output[i] =
 					half_float::detail::float2half_impl<std::round_to_nearest>(
-						input[i], std::false_type());
+						input[i], half_float::detail::false_type());
 			}
 
 			benchmark::DoNotOptimize(output);
