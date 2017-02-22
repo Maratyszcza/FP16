@@ -28,6 +28,11 @@ def main(args):
         build.unittest("alt-from-fp32-value",
             [build.cxx("alt-from-fp32-value.cc"), fp16_tables])
 
+        if build.target.is_x86_64:
+            stubs = build.peachpy("peachpy/stubs.py")
+            build.unittest("alt-xmm-to-fp32-ymm-avx", [build.cxx("peachpy/alt-xmm-to-fp32-xmm-avx.cc"), stubs])
+            build.unittest("alt-xmm-to-fp32-ymm-avx2", [build.cxx("peachpy/alt-xmm-to-fp32-ymm-avx2.cc"), stubs])
+
         if not build.target.is_emscripten:
             build.unittest("ieee-to-fp32-psimd", build.cxx("ieee-to-fp32-psimd.cc"))
             build.unittest("alt-to-fp32-psimd", build.cxx("alt-to-fp32-psimd.cc"))
