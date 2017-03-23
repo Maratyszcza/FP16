@@ -42,8 +42,10 @@ def main(args):
 
         build.unittest("bitcasts", build.cxx("bitcasts.cc"))
 
-    with build.options(source_dir="bench", extra_include_dirs=".",
-            macros="FP16_COMPARATIVE_BENCHMARKS" if options.compare else None,
+    macros = ["BENCHMARK_HAS_NO_INLINE_ASSEMBLY"]
+    if options.compare:
+        macros.append("FP16_COMPARATIVE_BENCHMARKS")
+    with build.options(source_dir="bench", extra_include_dirs=".", macros=macros,
             deps=[build.deps.googlebenchmark, build.deps.psimd]):
 
         build.benchmark("ieee-element-bench", build.cxx("ieee-element.cc"))
