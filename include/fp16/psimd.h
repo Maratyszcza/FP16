@@ -73,12 +73,12 @@ PSIMD_INTRINSIC psimd_f32 fp16_alt_to_fp32_psimd(psimd_u16 half) {
 	const psimd_s32 exp1_offset = psimd_splat_s32(INT32_C(0x00800000));
 	const psimd_f32 two_nonsign = (psimd_f32) (nonsign_bits + exp1_offset);
 	const psimd_s32 exp113_offset = exp112_offset | exp1_offset;
-	return (psimd_f32) (sign | (psimd_s32) (two_nonsign - (psimd_f32) psimd_max_s32(nonsign_bits, exp113_offset)));
+	return (psimd_f32) (sign | (psimd_s32) psimd_sub_f32(two_nonsign, (psimd_f32) psimd_max_s32(nonsign_bits, exp113_offset)));
 #else
 	const psimd_u32 exp_offset = psimd_splat_u32(UINT32_C(0x38000000));
 	const psimd_f32 nonsign = (psimd_f32) (shr3_nonsign + exp_offset);
 	const psimd_f32 denorm_bias = psimd_splat_f32(0x1.0p-14f);
-	return (psimd_f32) (sign | (psimd_s32) ((nonsign + nonsign) - psimd_max_f32(nonsign, denorm_bias)));
+	return (psimd_f32) (sign | (psimd_s32) psimd_sub_f32(psimd_add_f32(nonsign, nonsign), psimd_max_f32(nonsign, denorm_bias)));
 #endif
 }
 
@@ -101,8 +101,8 @@ PSIMD_INTRINSIC psimd_f32x2 fp16_alt_to_fp32x2_psimd(psimd_u16 half) {
 	const psimd_f32 two_nonsign_hi = (psimd_f32) (nonsign_bits_hi + exp1_offset);
 	const psimd_s32 exp113_offset = exp1_offset | exp112_offset;
 	psimd_f32x2 result;
-	result.lo = (psimd_f32) (sign_lo | (psimd_s32) (two_nonsign_lo - (psimd_f32) psimd_max_s32(nonsign_bits_lo, exp113_offset)));
-	result.hi = (psimd_f32) (sign_hi | (psimd_s32) (two_nonsign_hi - (psimd_f32) psimd_max_s32(nonsign_bits_hi, exp113_offset)));
+	result.lo = (psimd_f32) (sign_lo | (psimd_s32) psimd_sub_f32(two_nonsign_lo, (psimd_f32) psimd_max_s32(nonsign_bits_lo, exp113_offset)));
+	result.hi = (psimd_f32) (sign_hi | (psimd_s32) psimd_sub_f32(two_nonsign_hi, (psimd_f32) psimd_max_s32(nonsign_bits_hi, exp113_offset)));
 	return result;
 #else
 	const psimd_u32 exp_offset = psimd_splat_u32(UINT32_C(0x38000000));
@@ -110,8 +110,8 @@ PSIMD_INTRINSIC psimd_f32x2 fp16_alt_to_fp32x2_psimd(psimd_u16 half) {
 	const psimd_f32 nonsign_hi = (psimd_f32) (shr3_nonsign_hi + exp_offset);
 	const psimd_f32 denorm_bias = psimd_splat_f32(0x1.0p-14f);
 	psimd_f32x2 result;
-	result.lo = (psimd_f32) (sign_lo | (psimd_s32) ((nonsign_lo + nonsign_lo) - psimd_max_f32(nonsign_lo, denorm_bias)));
-	result.hi = (psimd_f32) (sign_hi | (psimd_s32) ((nonsign_hi + nonsign_hi) - psimd_max_f32(nonsign_hi, denorm_bias)));
+	result.lo = (psimd_f32) (sign_lo | (psimd_s32) psimd_sub_f32(psimd_add_f32(nonsign_lo, nonsign_lo), psimd_max_f32(nonsign_lo, denorm_bias)));
+	result.hi = (psimd_f32) (sign_hi | (psimd_s32) psimd_sub_f32(psimd_add_f32(nonsign_hi, nonsign_hi), psimd_max_f32(nonsign_hi, denorm_bias)));
 	return result;
 #endif
 }
