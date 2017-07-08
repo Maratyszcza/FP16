@@ -248,7 +248,7 @@ TEST(FP16_IEEE_TO_FP32_BITS, positive_nan) {
 			"F32(F16) = 0x" << std::setw(8) << nan_f32;
 
 		/* Check mantissa */
-		EXPECT_NE(nan_f32 & UINT32_C(0x007FFFFF), 0) <<
+		EXPECT_NE(nan_f32 & UINT32_C(0x007FFFFF), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << nan_f16 << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << nan_f32;
@@ -261,7 +261,7 @@ TEST(FP16_IEEE_TO_FP32_BITS, negative_nan) {
 		const uint32_t nan_f32 = fp16_ieee_to_fp32_bits(nan_f16);
 
 		/* Check sign */
-		EXPECT_NE(nan_f32 & UINT32_C(0x80000000), 0) <<
+		EXPECT_NE(nan_f32 & UINT32_C(0x80000000), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << nan_f16 << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << nan_f32;
@@ -273,7 +273,7 @@ TEST(FP16_IEEE_TO_FP32_BITS, negative_nan) {
 			"F32(F16) = 0x" << std::setw(8) << nan_f32;
 
 		/* Check mantissa */
-		EXPECT_NE(nan_f32 & UINT32_C(0x007FFFFF), 0) <<
+		EXPECT_NE(nan_f32 & UINT32_C(0x007FFFFF), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << nan_f16 << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << nan_f32;

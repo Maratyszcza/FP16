@@ -419,7 +419,6 @@ static inline uint16_t fp16_alt_from_fp32_value(float f) {
 	const float bias = fp32_from_bits((shl1_bias >> 1) + ((exp_difference + 2) << 23));
 	const float base = fp32_from_bits((shl1_base >> 1) + (2 << 23)) + bias;
 
-	const uint32_t bias_difference = 0x7F - 0xF;
 	const uint32_t exp_f = fp32_to_bits(base) >> 13;
 	return (sign >> 16) | ((exp_f & UINT32_C(0x00007C00)) + (fp32_to_bits(base) & UINT32_C(0x00000FFF)));
 }
