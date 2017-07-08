@@ -124,6 +124,14 @@ TEST(FP16_IEEE_FROM_FP32_VALUE, normalized_powers_of_2) {
 		"F32 = 0x" << std::setw(8) << sixtyfour_f32 << ", " <<
 		"F16(F32) = 0x" << std::setw(4) << fp16_ieee_from_fp32_value(sixtyfour_value) << ", " <<
 		"F16 = 0x" << std::setw(4) << sixtyfour_f16;
+
+	float max_po2_value;
+	memcpy(&max_po2_value, &max_po2_f32, sizeof(max_po2_value));
+	EXPECT_EQ(max_po2_f16, fp16_ieee_from_fp32_value(max_po2_value)) <<
+		std::hex << std::uppercase << std::setfill('0') <<
+		"F32 = 0x" << std::setw(8) << max_po2_f32 << ", " <<
+		"F16(F32) = 0x" << std::setw(4) << fp16_ieee_from_fp32_value(max_po2_value) << ", " <<
+		"F16 = 0x" << std::setw(4) << max_po2_f16;
 }
 
 TEST(FP16_IEEE_FROM_FP32_VALUE, denormalized_powers_of_2) {
