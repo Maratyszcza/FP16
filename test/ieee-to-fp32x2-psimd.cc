@@ -148,35 +148,35 @@ TEST(FP16_IEEE_TO_FP32x2_PSIMD, positive_nan) {
 			"F32(F16) = 0x" << std::setw(8) << fp32.hi[3];
 
 		/* Check mantissa */
-		EXPECT_NE(fp32.lo[0] & UINT32_C(0x007FFFFF), 0) <<
+		EXPECT_NE(fp32.lo[0] & UINT32_C(0x007FFFFF), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << fp16[0] << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << fp32.lo[0];
-		EXPECT_NE(fp32.lo[1] & UINT32_C(0x007FFFFF), 0) <<
+		EXPECT_NE(fp32.lo[1] & UINT32_C(0x007FFFFF), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << fp16[1] << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << fp32.lo[1];
-		EXPECT_NE(fp32.lo[2] & UINT32_C(0x007FFFFF), 0) <<
+		EXPECT_NE(fp32.lo[2] & UINT32_C(0x007FFFFF), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << fp16[2] << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << fp32.lo[2];
-		EXPECT_NE(fp32.lo[3] & UINT32_C(0x007FFFFF), 0) <<
+		EXPECT_NE(fp32.lo[3] & UINT32_C(0x007FFFFF), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << fp16[3] << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << fp32.lo[3];
-		EXPECT_NE(fp32.hi[0] & UINT32_C(0x007FFFFF), 0) <<
+		EXPECT_NE(fp32.hi[0] & UINT32_C(0x007FFFFF), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << fp16[4] << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << fp32.hi[0];
-		EXPECT_NE(fp32.hi[1] & UINT32_C(0x007FFFFF), 0) <<
+		EXPECT_NE(fp32.hi[1] & UINT32_C(0x007FFFFF), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << fp16[5] << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << fp32.hi[1];
-		EXPECT_NE(fp32.hi[2] & UINT32_C(0x007FFFFF), 0) <<
+		EXPECT_NE(fp32.hi[2] & UINT32_C(0x007FFFFF), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << fp16[6] << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << fp32.hi[2];
-		EXPECT_NE(fp32.hi[3] & UINT32_C(0x007FFFFF), 0) <<
+		EXPECT_NE(fp32.hi[3] & UINT32_C(0x007FFFFF), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << fp16[7] << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << fp32.hi[3];
@@ -267,35 +267,35 @@ TEST(FP16_IEEE_TO_FP32x2_PSIMD, negative_nan) {
 			"F32(F16) = 0x" << std::setw(8) << fp32.hi[3];
 
 		/* Check mantissa */
-		EXPECT_NE(fp32.lo[0] & UINT32_C(0x007FFFFF), 0) <<
+		EXPECT_NE(fp32.lo[0] & UINT32_C(0x007FFFFF), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << fp16[0] << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << fp32.lo[0];
-		EXPECT_NE(fp32.lo[1] & UINT32_C(0x007FFFFF), 0) <<
+		EXPECT_NE(fp32.lo[1] & UINT32_C(0x007FFFFF), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << fp16[1] << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << fp32.lo[1];
-		EXPECT_NE(fp32.lo[2] & UINT32_C(0x007FFFFF), 0) <<
+		EXPECT_NE(fp32.lo[2] & UINT32_C(0x007FFFFF), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << fp16[2] << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << fp32.lo[2];
-		EXPECT_NE(fp32.lo[3] & UINT32_C(0x007FFFFF), 0) <<
+		EXPECT_NE(fp32.lo[3] & UINT32_C(0x007FFFFF), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << fp16[3] << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << fp32.lo[3];
-		EXPECT_NE(fp32.hi[0] & UINT32_C(0x007FFFFF), 0) <<
+		EXPECT_NE(fp32.hi[0] & UINT32_C(0x007FFFFF), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << fp16[4] << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << fp32.hi[0];
-		EXPECT_NE(fp32.hi[1] & UINT32_C(0x007FFFFF), 0) <<
+		EXPECT_NE(fp32.hi[1] & UINT32_C(0x007FFFFF), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << fp16[5] << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << fp32.hi[1];
-		EXPECT_NE(fp32.hi[2] & UINT32_C(0x007FFFFF), 0) <<
+		EXPECT_NE(fp32.hi[2] & UINT32_C(0x007FFFFF), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << fp16[6] << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << fp32.hi[2];
-		EXPECT_NE(fp32.hi[3] & UINT32_C(0x007FFFFF), 0) <<
+		EXPECT_NE(fp32.hi[3] & UINT32_C(0x007FFFFF), UINT32_C(0)) <<
 			std::hex << std::uppercase << std::setfill('0') <<
 			"F16 = 0x" << std::setw(4) << fp16[7] << ", " <<
 			"F32(F16) = 0x" << std::setw(8) << fp32.hi[3];
