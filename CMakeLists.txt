@@ -20,28 +20,34 @@ SET(CONFU_DEPENDENCIES_SOURCE_DIR ${CMAKE_SOURCE_DIR}/deps
 SET(CONFU_DEPENDENCIES_BINARY_DIR ${CMAKE_BINARY_DIR}/deps
   CACHE PATH "Confu-style dependencies binary directory")
 
-IF(NOT TARGET psimd)
-  CONFIGURE_FILE(cmake/DownloadPSimd.cmake "${CMAKE_BINARY_DIR}/googletest-download/CMakeLists.txt")
+IF(NOT DEFINED PSIMD_SOURCE_DIR)
+  MESSAGE(STATUS "Downloading PSimd to ${CONFU_DEPENDENCIES_SOURCE_DIR}/psimd (define PSIMD_SOURCE_DIR to avoid it)")
+  CONFIGURE_FILE(cmake/DownloadPSimd.cmake "${CMAKE_BINARY_DIR}/psimd-download/CMakeLists.txt")
   EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googletest-download")
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/psimd-download")
   EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" --build .
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googletest-download")
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/psimd-download")
+  SET(PSIMD_SOURCE_DIR "${CONFU_DEPENDENCIES_SOURCE_DIR}/psimd" CACHE STRING "PSimd source directory")
 ENDIF()
 
-IF(NOT TARGET gtest)
+IF(FP16_BUILD_TESTS AND NOT DEFINED GOOGLETEST_SOURCE_DIR)
+  MESSAGE(STATUS "Downloading Google Test to ${CONFU_DEPENDENCIES_SOURCE_DIR}/googletest (define GOOGLETEST_SOURCE_DIR to avoid it)")
   CONFIGURE_FILE(cmake/DownloadGoogleTest.cmake "${CMAKE_BINARY_DIR}/googletest-download/CMakeLists.txt")
   EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googletest-download")
   EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" --build .
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googletest-download")
+  SET(GOOGLETEST_SOURCE_DIR "${CONFU_DEPENDENCIES_SOURCE_DIR}/googletest" CACHE STRING "Google Test source directory")
 ENDIF()
 
-IF(NOT TARGET benchmark)
+IF(FP16_BUILD_BENCHMARKS AND NOT DEFINED GOOGLEBENCHMARK_SOURCE_DIR)
+  MESSAGE(STATUS "Downloading Google Benchmark to ${CONFU_DEPENDENCIES_SOURCE_DIR}/googlebenchmark (define GOOGLEBENCHMARK_SOURCE_DIR to avoid it)")
   CONFIGURE_FILE(cmake/DownloadGoogleBenchmark.cmake "${CMAKE_BINARY_DIR}/googlebenchmark-download/CMakeLists.txt")
   EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googlebenchmark-download")
   EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" --build .
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googlebenchmark-download")
+  SET(GOOGLEBENCHMARK_SOURCE_DIR "${CONFU_DEPENDENCIES_SOURCE_DIR}/googlebenchmark" CACHE STRING "Google Benchmark source directory")
 ENDIF()
 
 # ---[ Build flags
@@ -74,7 +80,7 @@ INSTALL(FILES include/fp16.h
 # ---[ Configure psimd
 IF(NOT TARGET psimd)
   ADD_SUBDIRECTORY(
-    "${CONFU_DEPENDENCIES_SOURCE_DIR}/psimd"
+    "${PSIMD_SOURCE_DIR}"
     "${CONFU_DEPENDENCIES_BINARY_DIR}/psimd")
 ENDIF()
 
@@ -83,7 +89,7 @@ IF(FP16_BUILD_TESTS)
   IF(NOT TARGET gtest)
     SET(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
     ADD_SUBDIRECTORY(
-      "${CONFU_DEPENDENCIES_SOURCE_DIR}/googletest"
+      "${GOOGLETEST_SOURCE_DIR}"
       "${CONFU_DEPENDENCIES_BINARY_DIR}/googletest")
   ENDIF()
 
@@ -128,7 +134,7 @@ IF(FP16_BUILD_BENCHMARKS)
   IF(NOT TARGET benchmark)
     SET(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "")
     ADD_SUBDIRECTORY(
-      "${CONFU_DEPENDENCIES_SOURCE_DIR}/googlebenchmark"
+      "${GOOGLEBENCHMARK_SOURCE_DIR}"
       "${CONFU_DEPENDENCIES_BINARY_DIR}/googlebenchmark")
   ENDIF()
 
