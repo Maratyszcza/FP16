@@ -14,6 +14,19 @@ IF(FP16_BUILD_TESTS)
   ENABLE_TESTING()
 ENDIF()
 
+MACRO(FP16_TARGET_ENABLE_CXX99 target)
+  IF(${CMAKE_VERSION} VERSION_LESS "3.1")
+    IF(NOT MSVC)
+      TARGET_COMPILE_OPTIONS(${target} PRIVATE -std=c++11)
+    ENDIF()
+  ELSE()
+    SET_TARGET_PROPERTIES(${target} PROPERTIES
+      CXX_STANDARD 11
+      CXX_STANDARD_REQUIRED YES
+      CXX_EXTENSIONS NO)
+  ENDIF()
+ENDMACRO()
+
 # ---[ Download deps
 SET(CONFU_DEPENDENCIES_SOURCE_DIR ${CMAKE_SOURCE_DIR}/deps
   CACHE PATH "Confu-style dependencies source directory")
@@ -48,11 +61,6 @@ IF(FP16_BUILD_BENCHMARKS AND NOT DEFINED GOOGLEBENCHMARK_SOURCE_DIR)
   EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" --build .
     WORKING_DIRECTORY "${CONFU_DEPENDENCIES_BINARY_DIR}/googlebenchmark-download")
   SET(GOOGLEBENCHMARK_SOURCE_DIR "${CONFU_DEPENDENCIES_SOURCE_DIR}/googlebenchmark" CACHE STRING "Google Benchmark source directory")
-ENDIF()
-
-# ---[ Build flags
-IF(NOT MSVC)
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 ENDIF()
 
 # ---[ FP16 library
@@ -140,28 +148,30 @@ IF(FP16_BUILD_BENCHMARKS)
 
   # ---[ Build FP16 benchmarks
   ADD_EXECUTABLE(ieee-element-bench bench/ieee-element.cc)
+  TARGET_COMPILE_DEFINITIONS(ieee-element-bench PRIVATE FP16_COMPARATIVE_BENCHMARKS=1)
+  TARGET_INCLUDE_DIRECTORIES(ieee-element-bench PRIVATE ${PROJECT_SOURCE_DIR})
   TARGET_LINK_LIBRARIES(ieee-element-bench fp16 psimd benchmark)
 
   ADD_EXECUTABLE(alt-element-bench bench/alt-element.cc)
   TARGET_LINK_LIBRARIES(alt-element-bench fp16 psimd benchmark)
 
   ADD_EXECUTABLE(from-ieee-array-bench bench/from-ieee-array.cc)
-  TARGET_COMPILE_DEFINITIONS(from-ieee-array-bench PRIVATE "-DFP16_COMPARATIVE_BENCHMARKS=1")
+  FP16_TARGET_ENABLE_CXX99(from-ieee-array-bench)
+  TARGET_COMPILE_DEFINITIONS(from-ieee-array-bench PRIVATE FP16_COMPARATIVE_BENCHMARKS=1)
   TARGET_INCLUDE_DIRECTORIES(from-ieee-array-bench PRIVATE ${PROJECT_SOURCE_DIR})
   TARGET_LINK_LIBRARIES(from-ieee-array-bench fp16 psimd benchmark)
 
   ADD_EXECUTABLE(from-alt-array-bench bench/from-alt-array.cc)
-  TARGET_COMPILE_DEFINITIONS(from-alt-array-bench PRIVATE "-DFP16_COMPARATIVE_BENCHMARKS=1")
-  TARGET_INCLUDE_DIRECTORIES(from-alt-array-bench PRIVATE ${PROJECT_SOURCE_DIR})
+  FP16_TARGET_ENABLE_CXX99(from-alt-array-bench)
   TARGET_LINK_LIBRARIES(from-alt-array-bench fp16 psimd benchmark)
 
   ADD_EXECUTABLE(to-ieee-array-bench bench/to-ieee-array.cc)
-  TARGET_COMPILE_DEFINITIONS(to-ieee-array-bench PRIVATE "-DFP16_COMPARATIVE_BENCHMARKS=1")
+  FP16_TARGET_ENABLE_CXX99(to-ieee-array-bench)
+  TARGET_COMPILE_DEFINITIONS(to-ieee-array-bench PRIVATE FP16_COMPARATIVE_BENCHMARKS=1)
   TARGET_INCLUDE_DIRECTORIES(to-ieee-array-bench PRIVATE ${PROJECT_SOURCE_DIR})
   TARGET_LINK_LIBRARIES(to-ieee-array-bench fp16 psimd benchmark)
 
   ADD_EXECUTABLE(to-alt-array-bench bench/to-alt-array.cc)
-  TARGET_COMPILE_DEFINITIONS(to-alt-array-bench PRIVATE "-DFP16_COMPARATIVE_BENCHMARKS=1")
-  TARGET_INCLUDE_DIRECTORIES(to-alt-array-bench PRIVATE ${PROJECT_SOURCE_DIR})
+  FP16_TARGET_ENABLE_CXX99(to-alt-array-bench)
   TARGET_LINK_LIBRARIES(to-alt-array-bench fp16 psimd benchmark)
 ENDIF()
