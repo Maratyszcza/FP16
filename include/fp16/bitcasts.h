@@ -15,7 +15,7 @@ static inline float fp32_from_bits(uint32_t w) {
 #elif defined(__CUDA_ARCH__)
 	return __uint_as_float((unsigned int) w);
 #elif defined(__INTEL_COMPILER)
-	return _castu32_f32(x);
+	return _castu32_f32(w);
 #else
 	union {
 		uint32_t as_bits;
