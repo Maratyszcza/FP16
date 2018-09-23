@@ -18,7 +18,11 @@ PSIMD_INTRINSIC psimd_f32 fp16_ieee_to_fp32_psimd(psimd_u16 half) {
 	const psimd_u32 shr3_nonsign = (word + word) >> psimd_splat_u32(4);
 
 	const psimd_u32 exp_offset = psimd_splat_u32(UINT32_C(0x70000000));
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) || defined(__GNUC__) && !defined(__STRICT_ANSI__)
 	const psimd_f32 exp_scale = psimd_splat_f32(0x1.0p-112f);
+#else
+	const psimd_f32 exp_scale = psimd_splat_f32(fp32_from_bits(UINT32_C(0x7800000)));
+#endif
 	const psimd_f32 norm_nonsign = psimd_mul_f32((psimd_f32) (shr3_nonsign + exp_offset), exp_scale);
 
 	const psimd_u16 magic_mask = psimd_splat_u16(UINT16_C(0x3E80));
@@ -41,7 +45,11 @@ PSIMD_INTRINSIC psimd_f32x2 fp16_ieee_to_fp32x2_psimd(psimd_u16 half) {
 	const psimd_u32 shr3_nonsign_hi = (word_hi + word_hi) >> psimd_splat_u32(4);
 
 	const psimd_u32 exp_offset = psimd_splat_u32(UINT32_C(0x70000000));
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) || defined(__GNUC__) && !defined(__STRICT_ANSI__)
 	const psimd_f32 exp_scale = psimd_splat_f32(0x1.0p-112f);
+#else
+	const psimd_f32 exp_scale = psimd_splat_f32(fp32_from_bits(UINT32_C(0x7800000)));
+#endif
 	const psimd_f32 norm_nonsign_lo = psimd_mul_f32((psimd_f32) (shr3_nonsign_lo + exp_offset), exp_scale);
 	const psimd_f32 norm_nonsign_hi = psimd_mul_f32((psimd_f32) (shr3_nonsign_hi + exp_offset), exp_scale);
 
@@ -77,7 +85,11 @@ PSIMD_INTRINSIC psimd_f32 fp16_alt_to_fp32_psimd(psimd_u16 half) {
 #else
 	const psimd_u32 exp_offset = psimd_splat_u32(UINT32_C(0x38000000));
 	const psimd_f32 nonsign = (psimd_f32) (shr3_nonsign + exp_offset);
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) || defined(__GNUC__) && !defined(__STRICT_ANSI__)
 	const psimd_f32 denorm_bias = psimd_splat_f32(0x1.0p-14f);
+#else
+	const psimd_f32 denorm_bias = psimd_splat_f32(fp32_from_bits(UINT32_C(0x38800000)));
+#endif
 	return (psimd_f32) (sign | (psimd_s32) psimd_sub_f32(psimd_add_f32(nonsign, nonsign), psimd_max_f32(nonsign, denorm_bias)));
 #endif
 }

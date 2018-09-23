@@ -152,7 +152,11 @@ static inline float fp16_ieee_to_fp32_value(uint16_t h) {
 	 * operate on denormal inputs, and do not produce denormal results.
 	 */
 	const uint32_t exp_offset = UINT32_C(0xE0) << 23;
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) || defined(__GNUC__) && !defined(__STRICT_ANSI__)
 	const float exp_scale = 0x1.0p-112f;
+#else
+	const float exp_scale = fp32_from_bits(UINT32_C(0x7800000));
+#endif
 	const float normalized_value = fp32_from_bits((two_w >> 4) + exp_offset) * exp_scale;
 
 	/*
@@ -207,8 +211,13 @@ static inline float fp16_ieee_to_fp32_value(uint16_t h) {
  * floating-point operations and bitcasts between integer and floating-point variables.
  */
 static inline uint16_t fp16_ieee_from_fp32_value(float f) {
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) || defined(__GNUC__) && !defined(__STRICT_ANSI__)
 	const float scale_to_inf = 0x1.0p+112f;
 	const float scale_to_zero = 0x1.0p-110f;
+#else
+	const float scale_to_inf = fp32_from_bits(UINT32_C(0x77800000));
+	const float scale_to_zero = fp32_from_bits(UINT32_C(0x08800000));
+#endif
 	float base = (fabsf(f) * scale_to_inf) * scale_to_zero;
 
 	const uint32_t w = fp32_to_bits(f);
