@@ -10,6 +10,10 @@
 	#include <math.h>
 #endif
 
+#ifdef _MSC_VER
+	#include <intrin.h>
+#endif
+
 #include <fp16/bitcasts.h>
 
 
@@ -55,7 +59,13 @@ static inline uint32_t fp16_ieee_to_fp32_bits(uint16_t h) {
 	 * denormalized nonsign by renorm_shift, the unit bit of mantissa will shift into exponent, turning the
 	 * biased exponent into 1, and making mantissa normalized (i.e. without leading 1).
 	 */
+#ifdef _MSC_VER
+	unsigned long nonsign_bsr;
+	_BitScanReverse(&nonsign_bsr, (unsigned long) nonsign);
+	uint32_t renorm_shift = (uint32_t) nonsign_bsr ^ 31;
+#else
 	uint32_t renorm_shift = __builtin_clz(nonsign);
+#endif
 	renorm_shift = renorm_shift > 5 ? renorm_shift - 5 : 0;
 	/*
 	 * Iff half-precision number has exponent of 15, the addition overflows it into bit 31,
