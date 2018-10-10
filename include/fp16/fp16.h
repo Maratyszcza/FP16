@@ -288,7 +288,13 @@ static inline uint32_t fp16_alt_to_fp32_bits(uint16_t h) {
 	 * denormalized nonsign by renorm_shift, the unit bit of mantissa will shift into exponent, turning the
 	 * biased exponent into 1, and making mantissa normalized (i.e. without leading 1).
 	 */
+#ifdef _MSC_VER
+	unsigned long nonsign_bsr;
+	_BitScanReverse(&nonsign_bsr, (unsigned long) nonsign);
+	uint32_t renorm_shift = (uint32_t) nonsign_bsr ^ 31;
+#else
 	uint32_t renorm_shift = __builtin_clz(nonsign);
+#endif
 	renorm_shift = renorm_shift > 5 ? renorm_shift - 5 : 0;
 	/*
 	 * Iff nonsign is 0, it overflows into 0xFFFFFFFF, turning bit 31 into 1. Otherwise, bit 31 remains 0.
