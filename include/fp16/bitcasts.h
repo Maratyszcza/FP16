@@ -41,4 +41,36 @@ static inline uint32_t fp32_to_bits(float f) {
 #endif
 }
 
+static inline double fp64_from_bits(uint64_t w) {
+#if defined(__OPENCL_VERSION__)
+	return as_double(w);
+#elif defined(__CUDA_ARCH__)
+	return __longlong_as_double((long long) w);
+#elif defined(__INTEL_COMPILER)
+	return _castu64_f64(w);
+#else
+	union {
+		uint64_t as_bits;
+		double as_value;
+	} fp64 = { w };
+	return fp64.as_value;
+#endif
+}
+
+static inline uint64_t fp64_to_bits(double f) {
+#if defined(__OPENCL_VERSION__)
+	return as_ulong(f);
+#elif defined(__CUDA_ARCH__)
+	return (uint64_t) __double_as_longlong(f);
+#elif defined(__INTEL_COMPILER)
+	return _castf64_u64(f);
+#else
+	union {
+		double as_value;
+		uint64_t as_bits;
+	} fp64 = { f };
+	return fp64.as_bits;
+#endif
+}
+
 #endif /* FP16_BITCASTS_H */
