@@ -373,7 +373,7 @@ static inline float fp16_alt_to_fp32_value(uint16_t h) {
 	 * Note that this operation does not handle denormal inputs (where biased exponent == 0). However, they also do not
 	 * operate on denormal inputs, and do not produce denormal results.
 	 */
-	const float exp_offset = UINT32_C(0x70) << 23;
+	const uint32_t exp_offset = UINT32_C(0x70) << 23;
 	const float normalized_value = fp32_from_bits((two_w >> 4) + exp_offset);
 
 	/*
