@@ -6,8 +6,8 @@ INCLUDE(ExternalProject)
 ExternalProject_Add(psimd
 	GIT_REPOSITORY https://github.com/Maratyszcza/psimd.git
 	GIT_TAG master
-	SOURCE_DIR "${CONFU_DEPENDENCIES_SOURCE_DIR}/psimd"
-	BINARY_DIR "${CONFU_DEPENDENCIES_BINARY_DIR}/psimd"
+	SOURCE_DIR "${CMAKE_BINARY_DIR}/psimd-source"
+	BINARY_DIR "${CMAKE_BINARY_DIR}/psimd"
 	CONFIGURE_COMMAND ""
 	BUILD_COMMAND ""
 	INSTALL_COMMAND ""
