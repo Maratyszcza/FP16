@@ -1922,7 +1922,7 @@ namespace half_float
 		#endif
 
 			typedef half type;
-			static half cast(U arg) { return cast_impl(arg, is_float<U>()); };
+			static half cast(U arg) { return cast_impl(arg, is_float<U>()); }
 
 		private:
 			static half cast_impl(U arg, true_type) { return half(binary, float2half<R>(static_cast<float>(arg))); }
