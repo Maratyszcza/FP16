@@ -27,6 +27,33 @@ MACRO(FP16_TARGET_ENABLE_CXX11 target)
   ENDIF()
 ENDMACRO()
 
+# Configuration
+set(config_install_dir "lib/cmake/${PROJECT_NAME}")
+set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
+set(project_config "${generated_dir}/${PROJECT_NAME}Config.cmake")
+set(targets_export_name "${PROJECT_NAME}Targets")
+set(namespace "${PROJECT_NAME}::")
+
+# Include module with fuction 'write_basic_package_version_file'
+include(CMakePackageConfigHelpers)
+
+configure_package_config_file(
+        "cmake/Config.cmake.in"
+        "${project_config}"
+        INSTALL_DESTINATION "${config_install_dir}"
+)
+
+install(
+        FILES "${project_config}"
+        DESTINATION "${config_install_dir}"
+)
+
+install(
+        EXPORT "${targets_export_name}"
+        NAMESPACE "${namespace}"
+        DESTINATION "${config_install_dir}"
+)
+
 # ---[ Download deps
 IF(NOT DEFINED PSIMD_SOURCE_DIR)
   MESSAGE(STATUS "Downloading PSimd to ${CMAKE_BINARY_DIR}/psimd-source (define PSIMD_SOURCE_DIR to avoid it)")
@@ -83,6 +110,12 @@ INSTALL(FILES
     include/fp16/avx.py
     include/fp16/avx2.py
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fp16)
+
+INSTALL(TARGETS fp16
+  EXPORT "${targets_export_name}"
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # ---[ Configure psimd
 IF(NOT TARGET psimd)
