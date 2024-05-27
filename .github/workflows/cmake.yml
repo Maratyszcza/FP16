@@ -1,0 +1,28 @@
+name: CMake build
+on:
+  push:
+    paths:
+      - '.github/**/*.yml'
+      - 'CMakeLists.txt'
+      - 'cmake/**'
+      - '**.cc'
+      - '**.h'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+jobs:
+  cmake-linux-x86_64:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update apt
+        run: sudo apt update
+      - name: Install ninja
+        run: sudo apt install ninja-build
+      - name: Configure
+        run: cmake -Bbuild -S. -GNinja -DCMAKE_BUILD_TYPE=Release -DFP16_BUILD_COMPARATIVE_BENCHMARKS=ON
+      - name: Build
+        run: cmake --build build
+      - name: Test
+        run: ctest --test-dir build
