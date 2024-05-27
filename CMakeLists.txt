@@ -8,6 +8,7 @@ PROJECT(FP16 C CXX)
 # ---[ Options.
 OPTION(FP16_BUILD_TESTS "Build FP16 unit tests" ON)
 OPTION(FP16_BUILD_BENCHMARKS "Build FP16 micro-benchmarks" ON)
+OPTION(FP16_USE_SYSTEM_LIBS "Use system-provided dependency libraries" OFF)
 
 # ---[ CMake options
 IF(FP16_BUILD_TESTS)
@@ -28,34 +29,36 @@ MACRO(FP16_TARGET_ENABLE_CXX11 target)
 ENDMACRO()
 
 # ---[ Download deps
-IF(NOT DEFINED PSIMD_SOURCE_DIR)
-  MESSAGE(STATUS "Downloading PSimd to ${CMAKE_BINARY_DIR}/psimd-source (define PSIMD_SOURCE_DIR to avoid it)")
-  CONFIGURE_FILE(cmake/DownloadPSimd.cmake "${CMAKE_BINARY_DIR}/psimd-download/CMakeLists.txt")
-  EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/psimd-download")
-  EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" --build .
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/psimd-download")
-  SET(PSIMD_SOURCE_DIR "${CMAKE_BINARY_DIR}/psimd-source" CACHE STRING "PSimd source directory")
-ENDIF()
+IF(NOT FP16_USE_SYSTEM_LIBS)
+  IF(NOT DEFINED PSIMD_SOURCE_DIR)
+    MESSAGE(STATUS "Downloading PSimd to ${CMAKE_BINARY_DIR}/psimd-source (define PSIMD_SOURCE_DIR to avoid it)")
+    CONFIGURE_FILE(cmake/DownloadPSimd.cmake "${CMAKE_BINARY_DIR}/psimd-download/CMakeLists.txt")
+    EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/psimd-download")
+    EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" --build .
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/psimd-download")
+    SET(PSIMD_SOURCE_DIR "${CMAKE_BINARY_DIR}/psimd-source" CACHE STRING "PSimd source directory")
+  ENDIF()
 
-IF(FP16_BUILD_TESTS AND NOT DEFINED GOOGLETEST_SOURCE_DIR)
-  MESSAGE(STATUS "Downloading Google Test to ${CMAKE_BINARY_DIR}/googletest-source (define GOOGLETEST_SOURCE_DIR to avoid it)")
-  CONFIGURE_FILE(cmake/DownloadGoogleTest.cmake "${CMAKE_BINARY_DIR}/googletest-download/CMakeLists.txt")
-  EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googletest-download")
-  EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" --build .
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googletest-download")
-  SET(GOOGLETEST_SOURCE_DIR "${CMAKE_BINARY_DIR}/googletest-source" CACHE STRING "Google Test source directory")
-ENDIF()
+  IF(FP16_BUILD_TESTS AND NOT DEFINED GOOGLETEST_SOURCE_DIR)
+    MESSAGE(STATUS "Downloading Google Test to ${CMAKE_BINARY_DIR}/googletest-source (define GOOGLETEST_SOURCE_DIR to avoid it)")
+    CONFIGURE_FILE(cmake/DownloadGoogleTest.cmake "${CMAKE_BINARY_DIR}/googletest-download/CMakeLists.txt")
+    EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googletest-download")
+    EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" --build .
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googletest-download")
+    SET(GOOGLETEST_SOURCE_DIR "${CMAKE_BINARY_DIR}/googletest-source" CACHE STRING "Google Test source directory")
+  ENDIF()
 
-IF(FP16_BUILD_BENCHMARKS AND NOT DEFINED GOOGLEBENCHMARK_SOURCE_DIR)
-  MESSAGE(STATUS "Downloading Google Benchmark to ${CMAKE_BINARY_DIR}/googlebenchmark-source (define GOOGLEBENCHMARK_SOURCE_DIR to avoid it)")
-  CONFIGURE_FILE(cmake/DownloadGoogleBenchmark.cmake "${CMAKE_BINARY_DIR}/googlebenchmark-download/CMakeLists.txt")
-  EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googlebenchmark-download")
-  EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" --build .
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googlebenchmark-download")
-  SET(GOOGLEBENCHMARK_SOURCE_DIR "${CMAKE_BINARY_DIR}/googlebenchmark-source" CACHE STRING "Google Benchmark source directory")
+  IF(FP16_BUILD_BENCHMARKS AND NOT DEFINED GOOGLEBENCHMARK_SOURCE_DIR)
+    MESSAGE(STATUS "Downloading Google Benchmark to ${CMAKE_BINARY_DIR}/googlebenchmark-source (define GOOGLEBENCHMARK_SOURCE_DIR to avoid it)")
+    CONFIGURE_FILE(cmake/DownloadGoogleBenchmark.cmake "${CMAKE_BINARY_DIR}/googlebenchmark-download/CMakeLists.txt")
+    EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googlebenchmark-download")
+    EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" --build .
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googlebenchmark-download")
+    SET(GOOGLEBENCHMARK_SOURCE_DIR "${CMAKE_BINARY_DIR}/googlebenchmark-source" CACHE STRING "Google Benchmark source directory")
+  ENDIF()
 ENDIF()
 
 # ---[ FP16 library
@@ -85,19 +88,23 @@ INSTALL(FILES
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fp16)
 
 # ---[ Configure psimd
-IF(NOT TARGET psimd)
-  ADD_SUBDIRECTORY(
-    "${PSIMD_SOURCE_DIR}"
-    "${CMAKE_BINARY_DIR}/psimd")
+IF(NOT FP16_USE_SYSTEM_LIBS)
+  IF(NOT TARGET psimd)
+    ADD_SUBDIRECTORY(
+      "${PSIMD_SOURCE_DIR}"
+      "${CMAKE_BINARY_DIR}/psimd")
+  ENDIF()
 ENDIF()
 
 IF(FP16_BUILD_TESTS)
   # ---[ Build google test
-  IF(NOT TARGET gtest)
-    SET(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-    ADD_SUBDIRECTORY(
-      "${GOOGLETEST_SOURCE_DIR}"
-      "${CMAKE_BINARY_DIR}/googletest")
+  IF(NOT FP16_USE_SYSTEM_LIBS)
+    IF(NOT TARGET gtest)
+      SET(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+      ADD_SUBDIRECTORY(
+        "${GOOGLETEST_SOURCE_DIR}"
+        "${CMAKE_BINARY_DIR}/googletest")
+    ENDIF()
   ENDIF()
 
   # ---[ Build FP16 unit tests
@@ -138,39 +145,41 @@ ENDIF()
 
 IF(FP16_BUILD_BENCHMARKS)
   # ---[ Build google benchmark
-  IF(NOT TARGET benchmark)
-    SET(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "")
-    ADD_SUBDIRECTORY(
-      "${GOOGLEBENCHMARK_SOURCE_DIR}"
-      "${CMAKE_BINARY_DIR}/googlebenchmark")
+  IF(NOT FP16_USE_SYSTEM_LIBS)
+    IF(NOT TARGET benchmark)
+      SET(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "")
+      ADD_SUBDIRECTORY(
+        "${GOOGLEBENCHMARK_SOURCE_DIR}"
+        "${CMAKE_BINARY_DIR}/googlebenchmark")
+    ENDIF()
   ENDIF()
 
   # ---[ Build FP16 benchmarks
   ADD_EXECUTABLE(ieee-element-bench bench/ieee-element.cc)
   TARGET_COMPILE_DEFINITIONS(ieee-element-bench PRIVATE FP16_COMPARATIVE_BENCHMARKS=1)
   TARGET_INCLUDE_DIRECTORIES(ieee-element-bench PRIVATE ${PROJECT_SOURCE_DIR})
-  TARGET_LINK_LIBRARIES(ieee-element-bench fp16 psimd benchmark)
+  TARGET_LINK_LIBRARIES(ieee-element-bench fp16 benchmark)
 
   ADD_EXECUTABLE(alt-element-bench bench/alt-element.cc)
-  TARGET_LINK_LIBRARIES(alt-element-bench fp16 psimd benchmark)
+  TARGET_LINK_LIBRARIES(alt-element-bench fp16 benchmark)
 
   ADD_EXECUTABLE(from-ieee-array-bench bench/from-ieee-array.cc)
   FP16_TARGET_ENABLE_CXX11(from-ieee-array-bench)
   TARGET_COMPILE_DEFINITIONS(from-ieee-array-bench PRIVATE FP16_COMPARATIVE_BENCHMARKS=1)
   TARGET_INCLUDE_DIRECTORIES(from-ieee-array-bench PRIVATE ${PROJECT_SOURCE_DIR})
-  TARGET_LINK_LIBRARIES(from-ieee-array-bench fp16 psimd benchmark)
+  TARGET_LINK_LIBRARIES(from-ieee-array-bench fp16 benchmark)
 
   ADD_EXECUTABLE(from-alt-array-bench bench/from-alt-array.cc)
   FP16_TARGET_ENABLE_CXX11(from-alt-array-bench)
-  TARGET_LINK_LIBRARIES(from-alt-array-bench fp16 psimd benchmark)
+  TARGET_LINK_LIBRARIES(from-alt-array-bench fp16 benchmark)
 
   ADD_EXECUTABLE(to-ieee-array-bench bench/to-ieee-array.cc)
   FP16_TARGET_ENABLE_CXX11(to-ieee-array-bench)
   TARGET_COMPILE_DEFINITIONS(to-ieee-array-bench PRIVATE FP16_COMPARATIVE_BENCHMARKS=1)
   TARGET_INCLUDE_DIRECTORIES(to-ieee-array-bench PRIVATE ${PROJECT_SOURCE_DIR})
-  TARGET_LINK_LIBRARIES(to-ieee-array-bench fp16 psimd benchmark)
+  TARGET_LINK_LIBRARIES(to-ieee-array-bench fp16 benchmark)
 
   ADD_EXECUTABLE(to-alt-array-bench bench/to-alt-array.cc)
   FP16_TARGET_ENABLE_CXX11(to-alt-array-bench)
-  TARGET_LINK_LIBRARIES(to-alt-array-bench fp16 psimd benchmark)
+  TARGET_LINK_LIBRARIES(to-alt-array-bench fp16 benchmark)
 ENDIF()
