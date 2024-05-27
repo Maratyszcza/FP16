@@ -148,9 +148,11 @@ BENCHMARK(fp16_ieee_to_fp32_value)->RangeMultiplier(2)->Range(1<<10, 64<<20);
 			float* output = fp32.data();
 			const size_t n = state.range(0);
 			#if defined(__aarch64__)
-				const unsigned int fpcr = __builtin_aarch64_get_fpcr();
+				unsigned int fpcr;
+				__asm__ __volatile__("MRS %[fpcr], fpcr" : [fpcr] "=r" (fpcr));
 				/* Disable flush-to-zero (bit 24) and Alternative FP16 format (bit 26) */
-				__builtin_aarch64_set_fpcr(fpcr & 0xF6FFFFFFu);
+				__asm__ __volatile__("MSR fpcr, %[fpcr]" :
+					: [fpcr] "r" (fpcr & 0xF6FFFFFFu));
 			#else
 				unsigned int fpscr;
 				__asm__ __volatile__ ("VMRS %[fpscr], fpscr" : [fpscr] "=r" (fpscr));
@@ -164,7 +166,7 @@ BENCHMARK(fp16_ieee_to_fp32_value)->RangeMultiplier(2)->Range(1<<10, 64<<20);
 						(float16x4_t) vld1_u16(&input[i])));
 			}
 			#if defined(__aarch64__)
-				__builtin_aarch64_set_fpcr(fpcr);
+				__asm__ __volatile__("MSR fpcr, %[fpcr]" :: [fpcr] "r" (fpcr));
 			#else
 				__asm__ __volatile__ ("VMSR fpscr, %[fpscr]" :: [fpscr] "r" (fpscr));
 			#endif

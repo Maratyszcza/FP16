@@ -21,8 +21,30 @@ jobs:
       - name: Install ninja
         run: sudo apt install ninja-build
       - name: Configure
-        run: cmake -Bbuild -S. -GNinja -DCMAKE_BUILD_TYPE=Release -DFP16_BUILD_COMPARATIVE_BENCHMARKS=ON
+        run: cmake -Bbuild -S. -G Ninja -DCMAKE_BUILD_TYPE=Release -DFP16_BUILD_COMPARATIVE_BENCHMARKS=ON
       - name: Build
         run: cmake --build build
       - name: Test
-        run: ctest --test-dir build
+        run: ctest --test-dir build --parallel
+  cmake-macos-x86_64:
+    runs-on: macos-12
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -Bbuild -S. -G Xcode -DCMAKE_CONFIGURATION_TYPES=Release -DHAVE_STD_REGEX=TRUE -DFP16_BUILD_COMPARATIVE_BENCHMARKS=ON -DCMAKE_OSX_ARCHITECTURES=x86_64
+      - name: Build
+        run: cmake --build build --config Release --parallel $(sysctl -n hw.ncpu) -- -quiet
+      - name: Test
+        run: ctest --test-dir build --parallel
+  cmake-macos-arm64:
+    runs-on: macos-14
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -Bbuild -S. -G Xcode -DCMAKE_CONFIGURATION_TYPES=Release -DHAVE_STD_REGEX=TRUE -DFP16_BUILD_COMPARATIVE_BENCHMARKS=ON -DCMAKE_OSX_ARCHITECTURES=arm64
+      - name: Build
+        run: cmake --build build --config Release --parallel $(sysctl -n hw.ncpu) -- -quiet
+      - name: Test
+        run: ctest --test-dir build --parallel
