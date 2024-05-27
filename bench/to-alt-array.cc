@@ -1,9 +1,6 @@
 #include <benchmark/benchmark.h>
 
 #include <fp16.h>
-#ifndef EMSCRIPTEN
-	#include <fp16/psimd.h>
-#endif
 
 #include <vector>
 #include <random>
