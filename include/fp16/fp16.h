@@ -228,7 +228,12 @@ static inline uint16_t fp16_ieee_from_fp32_value(float f) {
 	const float scale_to_inf = fp32_from_bits(UINT32_C(0x77800000));
 	const float scale_to_zero = fp32_from_bits(UINT32_C(0x08800000));
 #endif
-	float base = (fabsf(f) * scale_to_inf) * scale_to_zero;
+#if defined(_MSC_VER) && defined(_M_IX86_FP) && (_M_IX86_FP == 0) || defined(__GNUC__) && defined(__FLT_EVAL_METHOD__) && (__FLT_EVAL_METHOD__ != 0)
+	const volatile float saturated_f = fabsf(f) * scale_to_inf;
+#else
+	const float saturated_f = fabsf(f) * scale_to_inf;
+#endif
+	float base = saturated_f * scale_to_zero;
 
 	const uint32_t w = fp32_to_bits(f);
 	const uint32_t shl1_w = w + w;

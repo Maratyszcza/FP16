@@ -25,7 +25,7 @@ jobs:
       - name: Build
         run: cmake --build build --parallel
       - name: Test
-        run: ctest --test-dir build --parallel
+        run: ctest --test-dir build --parallel --output-on-failure
   cmake-macos-x86_64:
     runs-on: macos-12
     timeout-minutes: 15
@@ -36,7 +36,7 @@ jobs:
       - name: Build
         run: cmake --build build --config Release --parallel -- -quiet
       - name: Test
-        run: ctest --test-dir build --build-config Release --parallel
+        run: ctest --test-dir build --build-config Release --parallel --output-on-failure
   cmake-macos-arm64:
     runs-on: macos-14
     timeout-minutes: 15
@@ -47,7 +47,7 @@ jobs:
       - name: Build
         run: cmake --build build --config Release --parallel -- -quiet
       - name: Test
-        run: ctest --test-dir build --build-config Release --parallel
+        run: ctest --test-dir build --build-config Release --parallel --output-on-failure
   cmake-windows-x86:
     runs-on: windows-2019
     timeout-minutes: 15
@@ -55,10 +55,12 @@ jobs:
       - uses: actions/checkout@v4
       - name: Configure
         run: cmake -Bbuild -S. -G "Visual Studio 16 2019" -A Win32 -DFP16_BUILD_COMPARATIVE_BENCHMARKS=ON
+        env:
+          CXXFLAGS: "/arch:IA32"
       - name: Build
         run: cmake --build build --config Release --parallel
       - name: Test
-        run: ctest --test-dir build --build-config Release --parallel
+        run: ctest --test-dir build --build-config Release --parallel --output-on-failure
   cmake-windows-x64:
     runs-on: windows-2019
     timeout-minutes: 15
@@ -69,7 +71,7 @@ jobs:
       - name: Build
         run: cmake --build build --config Release --parallel
       - name: Test
-        run: ctest --test-dir build --build-config Release --parallel
+        run: ctest --test-dir build --build-config Release --parallel --output-on-failure
   cmake-windows-arm64:
     runs-on: windows-2019
     timeout-minutes: 15
