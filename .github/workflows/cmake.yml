@@ -23,7 +23,7 @@ jobs:
       - name: Configure
         run: cmake -Bbuild -S. -G Ninja -DCMAKE_BUILD_TYPE=Release -DFP16_BUILD_COMPARATIVE_BENCHMARKS=ON
       - name: Build
-        run: cmake --build build
+        run: cmake --build build --parallel
       - name: Test
         run: ctest --test-dir build --parallel
   cmake-macos-x86_64:
@@ -32,9 +32,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Configure
-        run: cmake -Bbuild -S. -G Xcode -DCMAKE_CONFIGURATION_TYPES=Release -DHAVE_STD_REGEX=TRUE -DFP16_BUILD_COMPARATIVE_BENCHMARKS=ON -DCMAKE_OSX_ARCHITECTURES=x86_64
+        run: cmake -Bbuild -S. -G Xcode -DCMAKE_OSX_ARCHITECTURES=x86_64 -DFP16_BUILD_COMPARATIVE_BENCHMARKS=ON
       - name: Build
-        run: cmake --build build --config Release --parallel $(sysctl -n hw.ncpu) -- -quiet
+        run: cmake --build build --config Release --parallel -- -quiet
       - name: Test
         run: ctest --test-dir build --parallel
   cmake-macos-arm64:
@@ -43,8 +43,39 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Configure
-        run: cmake -Bbuild -S. -G Xcode -DCMAKE_CONFIGURATION_TYPES=Release -DHAVE_STD_REGEX=TRUE -DFP16_BUILD_COMPARATIVE_BENCHMARKS=ON -DCMAKE_OSX_ARCHITECTURES=arm64
+        run: cmake -Bbuild -S. -G Xcode -DCMAKE_OSX_ARCHITECTURES=arm64 -DFP16_BUILD_COMPARATIVE_BENCHMARKS=ON
       - name: Build
-        run: cmake --build build --config Release --parallel $(sysctl -n hw.ncpu) -- -quiet
+        run: cmake --build build --config Release --parallel -- -quiet
       - name: Test
         run: ctest --test-dir build --parallel
+  cmake-windows-x86:
+    runs-on: windows-2019
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -Bbuild -S. -G "Visual Studio 16 2019" -A Win32 -DFP16_BUILD_COMPARATIVE_BENCHMARKS=ON
+      - name: Build
+        run: cmake --build build --config Release --parallel
+      - name: Test
+        run: ctest --test-dir build --parallel
+  cmake-windows-x64:
+    runs-on: windows-2019
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -Bbuild -S. -G "Visual Studio 16 2019" -A x64 -DFP16_BUILD_COMPARATIVE_BENCHMARKS=ON
+      - name: Build
+        run: cmake --build build --config Release --parallel
+      - name: Test
+        run: ctest --test-dir build --parallel
+  cmake-windows-arm64:
+    runs-on: windows-2019
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -Bbuild -S. -G "Visual Studio 16 2019" -A ARM64 -DFP16_BUILD_COMPARATIVE_BENCHMARKS=ON
+      - name: Build
+        run: cmake --build build --config Release --parallel
