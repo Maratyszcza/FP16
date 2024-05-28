@@ -2,10 +2,6 @@
 
 #include <fp16.h>
 
-#if (defined(__i386__) || defined(__x86_64__)) && defined(__F16C__)
-	#include <immintrin.h>
-#endif
-
 #ifdef FP16_COMPARATIVE_BENCHMARKS
 	#include <third-party/THHalf.h>
 	#include <third-party/npy-halffloat.h>
@@ -140,20 +136,6 @@ static void fp16_ieee_from_fp32_value(benchmark::State& state) {
 	}
 }
 BENCHMARK(fp16_ieee_from_fp32_value);
-
-#if (defined(__i386__) || defined(__x86_64__)) && defined(__F16C__)
-	static void fp16_ieee_from_fp32_hardware(benchmark::State& state) {
-		uint32_t fp32 = UINT32_C(0x7F800000);
-		while (state.KeepRunning()) {
-			const uint16_t fp16 = static_cast<uint16_t>(
-				_mm_cvtsi128_si32(_mm_cvtps_ph(_mm_set_ss(fp32), _MM_FROUND_CUR_DIRECTION)));
-
-			fp32 = next_xorshift32(fp32);
-			benchmark::DoNotOptimize(fp16);
-		}
-	}
-	BENCHMARK(fp16_ieee_from_fp32_hardware);
-#endif
 
 #ifdef FP16_COMPARATIVE_BENCHMARKS
 	static void TH_float2halfbits(benchmark::State& state) {

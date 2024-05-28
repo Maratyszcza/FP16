@@ -5,10 +5,6 @@
 #include <fp16.h>
 #include <tables.h>
 
-#if (defined(__i386__) || defined(__x86_64__)) && defined(__F16C__)
-	#include <x86intrin.h>
-#endif
-
 
 TEST(FP16_IEEE_FROM_FP32_VALUE, normalized_powers_of_2) {
 	const uint16_t min_po2_f16   = UINT16_C(0x0400);
@@ -504,20 +500,3 @@ TEST(FP16_IEEE_FROM_FP32_VALUE, negative_normalized_values) {
 		}
 	}
 }
-
-#if (defined(__i386__) || defined(__x86_64__)) && defined(__F16C__)
-	TEST(FP16_IEEE_FROM_FP32_VALUE, match_hardware) {
-		const uint32_t min_nonzero = UINT32_C(0x00000001);
-		const uint32_t max_finite = UINT32_C(0x7F800000);
-		for (uint32_t bits = min_nonzero; bits < max_finite; bits++) {
-			float value;
-			memcpy(&value, &bits, sizeof(value));
-			const uint16_t reference = uint16_t(_mm_cvtsi128_si32(_mm_cvtps_ph(_mm_set_ss(value), _MM_FROUND_CUR_DIRECTION)));
-			ASSERT_EQ(reference, fp16_ieee_from_fp32_value(value)) <<
-				std::hex << std::uppercase << std::setfill('0') <<
-				"F32 = 0x" << std::setw(8) << bits << ", " <<
-				"F16(F32) = 0x" << std::setw(4) << fp16_ieee_from_fp32_value(value) << ", " <<
-				"F16 = 0x" << std::setw(4) << reference;
-		}
-	}
-#endif

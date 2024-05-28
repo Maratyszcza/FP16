@@ -5,9 +5,6 @@
 #include <fp16.h>
 #include <tables.h>
 
-#if (defined(__i386__) || defined(__x86_64__)) && defined(__F16C__)
-	#include <x86intrin.h>
-#endif
 
 
 TEST(FP16_ALT_FROM_FP32_VALUE, normalized_powers_of_2) {

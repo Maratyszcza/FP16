@@ -8,14 +8,6 @@
 #include <functional>
 #include <algorithm>
 
-#if (defined(__i386__) || defined(__x86_64__)) && defined(__F16C__)
-	#include <immintrin.h>
-#endif
-
-#if defined(__ARM_NEON__) || defined(__aarch64__)
-	#include <arm_neon.h>
-#endif
-
 
 static void fp16_alt_from_fp32_value(benchmark::State& state) {
 	const uint_fast32_t seed = std::chrono::system_clock::now().time_since_epoch().count();

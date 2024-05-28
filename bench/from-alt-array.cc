@@ -8,10 +8,6 @@
 #include <functional>
 #include <algorithm>
 
-#if defined(__ARM_NEON__) || defined(__aarch64__)
-	#include <arm_neon.h>
-#endif
-
 
 static void fp16_alt_to_fp32_bits(benchmark::State& state) {
 	const uint_fast32_t seed = std::chrono::system_clock::now().time_since_epoch().count();
