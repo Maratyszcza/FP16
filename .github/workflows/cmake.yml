@@ -36,7 +36,7 @@ jobs:
       - name: Build
         run: cmake --build build --config Release --parallel -- -quiet
       - name: Test
-        run: ctest --test-dir build --parallel
+        run: ctest --test-dir build --build-config Release --parallel
   cmake-macos-arm64:
     runs-on: macos-14
     timeout-minutes: 15
@@ -47,7 +47,7 @@ jobs:
       - name: Build
         run: cmake --build build --config Release --parallel -- -quiet
       - name: Test
-        run: ctest --test-dir build --parallel
+        run: ctest --test-dir build --build-config Release --parallel
   cmake-windows-x86:
     runs-on: windows-2019
     timeout-minutes: 15
@@ -58,7 +58,7 @@ jobs:
       - name: Build
         run: cmake --build build --config Release --parallel
       - name: Test
-        run: ctest --test-dir build --parallel
+        run: ctest --test-dir build --build-config Release --parallel
   cmake-windows-x64:
     runs-on: windows-2019
     timeout-minutes: 15
@@ -69,7 +69,7 @@ jobs:
       - name: Build
         run: cmake --build build --config Release --parallel
       - name: Test
-        run: ctest --test-dir build --parallel
+        run: ctest --test-dir build --build-config Release --parallel
   cmake-windows-arm64:
     runs-on: windows-2019
     timeout-minutes: 15

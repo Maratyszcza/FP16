@@ -65,8 +65,8 @@ IF(FP16_BUILD_TESTS)
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS YES)
   TARGET_INCLUDE_DIRECTORIES(ieee-to-fp32-bits-test PRIVATE test)
-  TARGET_LINK_LIBRARIES(ieee-to-fp32-bits-test fp16 gtest gtest_main)
-  ADD_TEST(ieee-to-fp32-bits ieee-to-fp32-bits-test)
+  TARGET_LINK_LIBRARIES(ieee-to-fp32-bits-test PRIVATE fp16 gtest gtest_main)
+  ADD_TEST(NAME ieee-to-fp32-bits COMMAND ieee-to-fp32-bits-test)
 
   ADD_EXECUTABLE(ieee-to-fp32-value-test test/ieee-to-fp32-value.cc test/tables.cc)
   SET_TARGET_PROPERTIES(ieee-to-fp32-value-test PROPERTIES
@@ -74,8 +74,8 @@ IF(FP16_BUILD_TESTS)
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS YES)
   TARGET_INCLUDE_DIRECTORIES(ieee-to-fp32-value-test PRIVATE test)
-  TARGET_LINK_LIBRARIES(ieee-to-fp32-value-test fp16 gtest gtest_main)
-  ADD_TEST(ieee-to-fp32-value ieee-to-fp32-value-test)
+  TARGET_LINK_LIBRARIES(ieee-to-fp32-value-test PRIVATE fp16 gtest gtest_main)
+  ADD_TEST(NAME ieee-to-fp32-value COMMAND ieee-to-fp32-value-test)
 
   ADD_EXECUTABLE(ieee-from-fp32-value-test test/ieee-from-fp32-value.cc test/tables.cc)
   SET_TARGET_PROPERTIES(ieee-from-fp32-value-test PROPERTIES
@@ -83,8 +83,8 @@ IF(FP16_BUILD_TESTS)
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS YES)
   TARGET_INCLUDE_DIRECTORIES(ieee-from-fp32-value-test PRIVATE test)
-  TARGET_LINK_LIBRARIES(ieee-from-fp32-value-test fp16 gtest gtest_main)
-  ADD_TEST(ieee-from-fp32-value ieee-from-fp32-value-test)
+  TARGET_LINK_LIBRARIES(ieee-from-fp32-value-test PRIVATE fp16 gtest gtest_main)
+  ADD_TEST(NAME ieee-from-fp32-value COMMAND ieee-from-fp32-value-test)
 
   ADD_EXECUTABLE(alt-to-fp32-bits-test test/alt-to-fp32-bits.cc test/tables.cc)
   SET_TARGET_PROPERTIES(alt-to-fp32-bits-test PROPERTIES
@@ -92,8 +92,8 @@ IF(FP16_BUILD_TESTS)
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS YES)
   TARGET_INCLUDE_DIRECTORIES(alt-to-fp32-bits-test PRIVATE test)
-  TARGET_LINK_LIBRARIES(alt-to-fp32-bits-test fp16 gtest gtest_main)
-  ADD_TEST(alt-to-fp32-bits alt-to-fp32-bits-test)
+  TARGET_LINK_LIBRARIES(alt-to-fp32-bits-test PRIVATE fp16 gtest gtest_main)
+  ADD_TEST(NAME alt-to-fp32-bits COMMAND alt-to-fp32-bits-test)
 
   ADD_EXECUTABLE(alt-to-fp32-value-test test/alt-to-fp32-value.cc test/tables.cc)
   SET_TARGET_PROPERTIES(alt-to-fp32-value-test PROPERTIES
@@ -101,8 +101,8 @@ IF(FP16_BUILD_TESTS)
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS YES)
   TARGET_INCLUDE_DIRECTORIES(alt-to-fp32-value-test PRIVATE test)
-  TARGET_LINK_LIBRARIES(alt-to-fp32-value-test fp16 gtest gtest_main)
-  ADD_TEST(alt-to-fp32-value alt-to-fp32-value-test)
+  TARGET_LINK_LIBRARIES(alt-to-fp32-value-test PRIVATE fp16 gtest gtest_main)
+  ADD_TEST(NAME alt-to-fp32-value COMMAND alt-to-fp32-value-test)
 
   ADD_EXECUTABLE(alt-from-fp32-value-test test/alt-from-fp32-value.cc test/tables.cc)
   SET_TARGET_PROPERTIES(alt-from-fp32-value-test PROPERTIES
@@ -110,16 +110,16 @@ IF(FP16_BUILD_TESTS)
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS YES)
   TARGET_INCLUDE_DIRECTORIES(alt-from-fp32-value-test PRIVATE test)
-  TARGET_LINK_LIBRARIES(alt-from-fp32-value-test fp16 gtest gtest_main)
-  ADD_TEST(alt-from-fp32-value alt-from-fp32-value-test)
+  TARGET_LINK_LIBRARIES(alt-from-fp32-value-test PRIVATE fp16 gtest gtest_main)
+  ADD_TEST(NAME alt-from-fp32-value COMMAND alt-from-fp32-value-test)
 
   ADD_EXECUTABLE(bitcasts-test test/bitcasts.cc)
   SET_TARGET_PROPERTIES(bitcasts-test PROPERTIES
     CXX_STANDARD 11
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS YES)
-  TARGET_LINK_LIBRARIES(bitcasts-test fp16 gtest gtest_main)
-  ADD_TEST(bitcasts bitcasts-test)
+  TARGET_LINK_LIBRARIES(bitcasts-test PRIVATE fp16 gtest gtest_main)
+  ADD_TEST(NAME bitcasts COMMAND bitcasts-test)
 ENDIF()
 
 IF(FP16_BUILD_BENCHMARKS)
@@ -139,14 +139,14 @@ IF(FP16_BUILD_BENCHMARKS)
     CXX_EXTENSIONS YES)
   TARGET_COMPILE_DEFINITIONS(ieee-element-bench PRIVATE "FP16_COMPARATIVE_BENCHMARKS=$<BOOL:FP16_BUILD_COMPARATIVE_BENCHMARKS>")
   TARGET_INCLUDE_DIRECTORIES(ieee-element-bench PRIVATE "${PROJECT_SOURCE_DIR}")
-  TARGET_LINK_LIBRARIES(ieee-element-bench fp16 benchmark)
+  TARGET_LINK_LIBRARIES(ieee-element-bench PRIVATE fp16 benchmark)
 
   ADD_EXECUTABLE(alt-element-bench bench/alt-element.cc)
   SET_TARGET_PROPERTIES(alt-element-bench PROPERTIES
     CXX_STANDARD 11
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS YES)
-  TARGET_LINK_LIBRARIES(alt-element-bench fp16 benchmark)
+  TARGET_LINK_LIBRARIES(alt-element-bench PRIVATE fp16 benchmark)
 
   ADD_EXECUTABLE(from-ieee-array-bench bench/from-ieee-array.cc)
   SET_TARGET_PROPERTIES(from-ieee-array-bench PROPERTIES
@@ -155,14 +155,14 @@ IF(FP16_BUILD_BENCHMARKS)
     CXX_EXTENSIONS YES)
   TARGET_COMPILE_DEFINITIONS(from-ieee-array-bench PRIVATE "FP16_COMPARATIVE_BENCHMARKS=$<BOOL:FP16_BUILD_COMPARATIVE_BENCHMARKS>")
   TARGET_INCLUDE_DIRECTORIES(from-ieee-array-bench PRIVATE "${PROJECT_SOURCE_DIR}")
-  TARGET_LINK_LIBRARIES(from-ieee-array-bench fp16 benchmark)
+  TARGET_LINK_LIBRARIES(from-ieee-array-bench PRIVATE fp16 benchmark)
 
   ADD_EXECUTABLE(from-alt-array-bench bench/from-alt-array.cc)
   SET_TARGET_PROPERTIES(from-alt-array-bench PROPERTIES
     CXX_STANDARD 11
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS YES)
-  TARGET_LINK_LIBRARIES(from-alt-array-bench fp16 benchmark)
+  TARGET_LINK_LIBRARIES(from-alt-array-bench PRIVATE fp16 benchmark)
 
   ADD_EXECUTABLE(to-ieee-array-bench bench/to-ieee-array.cc)
   SET_TARGET_PROPERTIES(to-ieee-array-bench PROPERTIES
@@ -171,12 +171,12 @@ IF(FP16_BUILD_BENCHMARKS)
     CXX_EXTENSIONS YES)
   TARGET_COMPILE_DEFINITIONS(to-ieee-array-bench PRIVATE "FP16_COMPARATIVE_BENCHMARKS=$<BOOL:FP16_BUILD_COMPARATIVE_BENCHMARKS>")
   TARGET_INCLUDE_DIRECTORIES(to-ieee-array-bench PRIVATE "${PROJECT_SOURCE_DIR}")
-  TARGET_LINK_LIBRARIES(to-ieee-array-bench fp16 benchmark)
+  TARGET_LINK_LIBRARIES(to-ieee-array-bench PRIVATE fp16 benchmark)
 
   ADD_EXECUTABLE(to-alt-array-bench bench/to-alt-array.cc)
   SET_TARGET_PROPERTIES(to-alt-array-bench PROPERTIES
     CXX_STANDARD 11
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS YES)
-  TARGET_LINK_LIBRARIES(to-alt-array-bench fp16 benchmark)
+  TARGET_LINK_LIBRARIES(to-alt-array-bench PRIVATE fp16 benchmark)
 ENDIF()
