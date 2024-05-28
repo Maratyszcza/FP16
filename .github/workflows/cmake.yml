@@ -26,6 +26,27 @@ jobs:
         run: cmake --build build --parallel
       - name: Test
         run: ctest --test-dir build --parallel --output-on-failure
+  cmake-linux-x86:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update apt
+        run: sudo apt update
+      - name: Install multilib gcc
+        run: sudo apt install gcc-multilib g++-multilib
+      - name: Install ninja
+        run: sudo apt install ninja-build
+      - name: Configure
+        run: cmake -Bbuild -S. -G Ninja -DCMAKE_BUILD_TYPE=Release -DFP16_BUILD_COMPARATIVE_BENCHMARKS=ON
+        env:
+          CFLAGS: "-m32 -mfpmath=387"
+          CXXFLAGS: "-m32 -mfpmath=387"
+          LDFLAGS: "-m32"
+      - name: Build
+        run: cmake --build build --parallel
+      - name: Test
+        run: ctest --test-dir build --parallel --output-on-failure
   cmake-macos-x86_64:
     runs-on: macos-12
     timeout-minutes: 15
@@ -56,6 +77,7 @@ jobs:
       - name: Configure
         run: cmake -Bbuild -S. -G "Visual Studio 16 2019" -A Win32 -DFP16_BUILD_COMPARATIVE_BENCHMARKS=ON
         env:
+          CFLAGS: "/arch:IA32"
           CXXFLAGS: "/arch:IA32"
       - name: Build
         run: cmake --build build --config Release --parallel
