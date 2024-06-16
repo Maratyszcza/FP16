@@ -58,6 +58,20 @@ jobs:
         run: cmake --build build --config Release --parallel -- -quiet
       - name: Test
         run: ctest --test-dir build --build-config Release --parallel --output-on-failure
+  cmake-macos-x86_64-f16c:
+    runs-on: macos-12
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -Bbuild -S. -G Xcode -DCMAKE_OSX_ARCHITECTURES=x86_64 -DFP16_BUILD_COMPARATIVE_BENCHMARKS=ON
+        env:
+          CFLAGS: "-mf16c"
+          CXXFLAGS: "-mf16c"
+      - name: Build
+        run: cmake --build build --config Release --parallel -- -quiet
+      - name: Test
+        run: ctest --test-dir build --build-config Release --parallel --output-on-failure
   cmake-macos-arm64:
     runs-on: macos-14
     timeout-minutes: 15
