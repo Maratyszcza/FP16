@@ -30,7 +30,7 @@ static inline uint32_t next_xorshift32(uint32_t x) {
 static void fp16_ieee_to_fp32_bits(benchmark::State& state) {
 	uint16_t fp16 = UINT16_C(0x7C00);
 	while (state.KeepRunning()) {
-		const uint32_t fp32 = fp16_ieee_to_fp32_bits(fp16);
+		uint32_t fp32 = fp16_ieee_to_fp32_bits(fp16);
 
 		fp16 = next_xorshift16(fp16);
 		benchmark::DoNotOptimize(fp32);
@@ -41,7 +41,7 @@ BENCHMARK(fp16_ieee_to_fp32_bits);
 static void fp16_ieee_to_fp32_value(benchmark::State& state) {
 	uint16_t fp16 = UINT16_C(0x7C00);
 	while (state.KeepRunning()) {
-		const float fp32 = fp16_ieee_to_fp32_value(fp16);
+		float fp32 = fp16_ieee_to_fp32_value(fp16);
 
 		fp16 = next_xorshift16(fp16);
 		benchmark::DoNotOptimize(fp32);
@@ -65,7 +65,7 @@ BENCHMARK(fp16_ieee_to_fp32_value);
 	static void npy_halfbits_to_floatbits(benchmark::State& state) {
 		uint16_t fp16 = UINT16_C(0x7C00);
 		while (state.KeepRunning()) {
-			const uint32_t fp32 = npy_halfbits_to_floatbits(fp16);
+			uint32_t fp32 = npy_halfbits_to_floatbits(fp16);
 
 			fp16 = next_xorshift16(fp16);
 			benchmark::DoNotOptimize(fp32);
@@ -76,7 +76,7 @@ BENCHMARK(fp16_ieee_to_fp32_value);
 	static void Eigen_half_to_float(benchmark::State& state) {
 		uint16_t fp16 = UINT16_C(0x7C00);
 		while (state.KeepRunning()) {
-			const float fp32 =
+			float fp32 =
 				Eigen::half_impl::half_to_float(
 					Eigen::half_impl::raw_uint16_to_half(fp16));
 
@@ -89,7 +89,7 @@ BENCHMARK(fp16_ieee_to_fp32_value);
 	static void Float16Compressor_decompress(benchmark::State& state) {
 		uint16_t fp16 = UINT16_C(0x7C00);
 		while (state.KeepRunning()) {
-			const float fp32 = Float16Compressor::decompress(fp16);
+			float fp32 = Float16Compressor::decompress(fp16);
 
 			fp16 = next_xorshift16(fp16);
 			benchmark::DoNotOptimize(fp32);
@@ -100,7 +100,7 @@ BENCHMARK(fp16_ieee_to_fp32_value);
 	static void half_float_detail_half2float_table(benchmark::State& state) {
 		uint16_t fp16 = UINT16_C(0x7C00);
 		while (state.KeepRunning()) {
-			const float fp32 =
+			float fp32 =
 				half_float::detail::half2float_impl(fp16,
 					half_float::detail::true_type());
 
@@ -113,7 +113,7 @@ BENCHMARK(fp16_ieee_to_fp32_value);
 	static void half_float_detail_half2float_branch(benchmark::State& state) {
 		uint16_t fp16 = UINT16_C(0x7C00);
 		while (state.KeepRunning()) {
-			const float fp32 =
+			float fp32 =
 				half_float::detail::half2float_impl(fp16,
 					half_float::detail::false_type());
 
@@ -129,7 +129,7 @@ BENCHMARK(fp16_ieee_to_fp32_value);
 static void fp16_ieee_from_fp32_value(benchmark::State& state) {
 	uint32_t fp32 = UINT32_C(0x7F800000);
 	while (state.KeepRunning()) {
-		const uint16_t fp16 = fp16_ieee_from_fp32_value(fp32_from_bits(fp32));
+		uint16_t fp16 = fp16_ieee_from_fp32_value(fp32_from_bits(fp32));
 
 		fp32 = next_xorshift32(fp32);
 		benchmark::DoNotOptimize(fp16);
@@ -154,7 +154,7 @@ BENCHMARK(fp16_ieee_from_fp32_value);
 	static void npy_floatbits_to_halfbits(benchmark::State& state) {
 		uint32_t fp32 = UINT32_C(0x7F800000);
 		while (state.KeepRunning()) {
-			const uint16_t fp16 = npy_floatbits_to_halfbits(fp32);
+			uint16_t fp16 = npy_floatbits_to_halfbits(fp32);
 
 			fp32 = next_xorshift32(fp32);
 			benchmark::DoNotOptimize(fp16);
@@ -165,7 +165,7 @@ BENCHMARK(fp16_ieee_from_fp32_value);
 	static void Eigen_float_to_half_rtne(benchmark::State& state) {
 		uint32_t fp32 = UINT32_C(0x7F800000);
 		while (state.KeepRunning()) {
-			const Eigen::half_impl::__half fp16 =
+			Eigen::half_impl::__half fp16 =
 				Eigen::half_impl::float_to_half_rtne(
 					fp32_from_bits(fp32));
 
@@ -178,7 +178,7 @@ BENCHMARK(fp16_ieee_from_fp32_value);
 	static void Float16Compressor_compress(benchmark::State& state) {
 		uint32_t fp32 = UINT32_C(0x7F800000);
 		while (state.KeepRunning()) {
-			const uint16_t fp16 = Float16Compressor::compress(fp32_from_bits(fp32));
+			uint16_t fp16 = Float16Compressor::compress(fp32_from_bits(fp32));
 
 			fp32 = next_xorshift32(fp32);
 			benchmark::DoNotOptimize(fp16);
@@ -189,7 +189,7 @@ BENCHMARK(fp16_ieee_from_fp32_value);
 	static void half_float_detail_float2half_table(benchmark::State& state) {
 		uint32_t fp32 = UINT32_C(0x7F800000);
 		while (state.KeepRunning()) {
-			const uint16_t fp16 =
+			uint16_t fp16 =
 				half_float::detail::float2half_impl<std::round_to_nearest>(
 					fp32_from_bits(fp32),
 						half_float::detail::true_type());
@@ -203,7 +203,7 @@ BENCHMARK(fp16_ieee_from_fp32_value);
 	static void half_float_detail_float2half_branch(benchmark::State& state) {
 		uint32_t fp32 = UINT32_C(0x7F800000);
 		while (state.KeepRunning()) {
-			const uint16_t fp16 =
+			uint16_t fp16 =
 				half_float::detail::float2half_impl<std::round_to_nearest>(
 					fp32_from_bits(fp32),
 						half_float::detail::false_type());
