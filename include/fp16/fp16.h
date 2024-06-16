@@ -107,7 +107,13 @@ static inline uint32_t fp16_ieee_to_fp32_bits(uint16_t h) {
  * floating-point operations and bitcasts between integer and floating-point variables.
  */
 static inline float fp16_ieee_to_fp32_value(uint16_t h) {
-#if FP16_USE_FP16_TYPE
+#if FP16_USE_FLOAT16_TYPE
+	union {
+		uint16_t as_bits;
+		_Float16 as_value;
+	} fp16 = { h };
+	return (float) fp16.as_value;
+#elif FP16_USE_FP16_TYPE
 	union {
 		uint16_t as_bits;
 		__fp16 as_value;
@@ -230,7 +236,13 @@ static inline float fp16_ieee_to_fp32_value(uint16_t h) {
  * floating-point operations and bitcasts between integer and floating-point variables.
  */
 static inline uint16_t fp16_ieee_from_fp32_value(float f) {
-#if FP16_USE_FP16_TYPE
+#if FP16_USE_FLOAT16_TYPE
+	union {
+		_Float16 as_value;
+		uint16_t as_bits;
+	} fp16 = { (_Float16) f };
+	return fp16.as_bits;
+#elif FP16_USE_FP16_TYPE
 	union {
 		__fp16 as_value;
 		uint16_t as_bits;
