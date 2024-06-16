@@ -52,6 +52,7 @@ IF(FP16_INSTALL_LIBRARY)
   INSTALL(FILES
       include/fp16/bitcasts.h
       include/fp16/fp16.h
+      include/fp16/macros.h
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/fp16")
 ENDIF()
 
