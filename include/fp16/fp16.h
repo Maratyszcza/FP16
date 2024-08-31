@@ -4,10 +4,8 @@
 
 #if defined(__cplusplus) && (__cplusplus >= 201103L)
 	#include <cstdint>
-	#include <cmath>
 #elif !defined(__OPENCL_VERSION__)
 	#include <stdint.h>
-	#include <math.h>
 #endif
 
 #include <fp16/bitcasts.h>
@@ -286,14 +284,15 @@ static inline uint16_t fp16_ieee_from_fp32_value(float f) {
 	const float scale_to_inf = fp32_from_bits(UINT32_C(0x77800000));
 	const float scale_to_zero = fp32_from_bits(UINT32_C(0x08800000));
 #endif
+	const uint32_t w = fp32_to_bits(f);
+	const float abs_f = fp32_from_bits(w & UINT32_C(0x7FFFFFFF));
 #if defined(_MSC_VER) && defined(_M_IX86_FP) && (_M_IX86_FP == 0) || defined(__GNUC__) && defined(__FLT_EVAL_METHOD__) && (__FLT_EVAL_METHOD__ != 0)
-	const volatile float saturated_f = fabsf(f) * scale_to_inf;
+	const volatile float saturated_f = abs_f * scale_to_inf;
 #else
-	const float saturated_f = fabsf(f) * scale_to_inf;
+	const float saturated_f = abs_f * scale_to_inf;
 #endif
 	float base = saturated_f * scale_to_zero;
 
-	const uint32_t w = fp32_to_bits(f);
 	const uint32_t shl1_w = w + w;
 	const uint32_t sign = w & UINT32_C(0x80000000);
 	uint32_t bias = shl1_w & UINT32_C(0xFF000000);
