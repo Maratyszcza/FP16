@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 
 #include <cstdint>
+#include <iomanip>
+#include <ios>
 
 #include <fp16.h>
 #include <tables.h>

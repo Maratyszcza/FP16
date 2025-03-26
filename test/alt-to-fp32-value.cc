@@ -2,6 +2,8 @@
 
 #include <cstdint>
 #include <cmath>
+#include <iomanip>
+#include <ios>
 
 #include <fp16.h>
 #include <tables.h>
