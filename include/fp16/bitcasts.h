@@ -16,6 +16,10 @@
 	#include <intrin.h>
 #endif
 
+#if defined(__clang__) && (defined(_M_IX86) || defined(_M_X64))
+   #include <x86intrin.h>
+#endif
+
 
 static inline float fp32_from_bits(uint32_t w) {
 #if defined(__OPENCL_VERSION__)
