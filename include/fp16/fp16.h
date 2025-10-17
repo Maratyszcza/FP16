@@ -66,14 +66,17 @@ static inline uint32_t fp16_ieee_to_fp32_bits(uint16_t h) {
 	 * denormalized nonsign by renorm_shift, the unit bit of mantissa will shift into exponent, turning the
 	 * biased exponent into 1, and making mantissa normalized (i.e. without leading 1).
 	 */
+	uint32_t renorm_shift = 0;
+	if (nonsign != 0) {
 #ifdef _MSC_VER
-	unsigned long nonsign_bsr;
-	_BitScanReverse(&nonsign_bsr, (unsigned long) nonsign);
-	uint32_t renorm_shift = (uint32_t) nonsign_bsr ^ 31;
+		unsigned long nonsign_bsr;
+		_BitScanReverse(&nonsign_bsr, (unsigned long) nonsign);
+		renorm_shift = (uint32_t) nonsign_bsr ^ 31;
 #else
-	uint32_t renorm_shift = __builtin_clz(nonsign);
+		renorm_shift = __builtin_clz(nonsign);
 #endif
-	renorm_shift = renorm_shift > 5 ? renorm_shift - 5 : 0;
+		renorm_shift = renorm_shift > 5 ? renorm_shift - 5 : 0;
+	}
 	/*
 	 * Iff half-precision number has exponent of 15, the addition overflows it into bit 31,
 	 * and the subsequent shift turns the high 9 bits into 1. Thus
@@ -352,14 +355,17 @@ static inline uint32_t fp16_alt_to_fp32_bits(uint16_t h) {
 	 * denormalized nonsign by renorm_shift, the unit bit of mantissa will shift into exponent, turning the
 	 * biased exponent into 1, and making mantissa normalized (i.e. without leading 1).
 	 */
+	uint32_t renorm_shift = 0;
+	if (nonsign != 0) {
 #ifdef _MSC_VER
-	unsigned long nonsign_bsr;
-	_BitScanReverse(&nonsign_bsr, (unsigned long) nonsign);
-	uint32_t renorm_shift = (uint32_t) nonsign_bsr ^ 31;
+		unsigned long nonsign_bsr;
+		_BitScanReverse(&nonsign_bsr, (unsigned long) nonsign);
+		renorm_shift = (uint32_t) nonsign_bsr ^ 31;
 #else
-	uint32_t renorm_shift = __builtin_clz(nonsign);
+		renorm_shift = __builtin_clz(nonsign);
 #endif
-	renorm_shift = renorm_shift > 5 ? renorm_shift - 5 : 0;
+		renorm_shift = renorm_shift > 5 ? renorm_shift - 5 : 0;
+	}
 	/*
 	 * Iff nonsign is 0, it overflows into 0xFFFFFFFF, turning bit 31 into 1. Otherwise, bit 31 remains 0.
 	 * The signed shift right by 31 broadcasts bit 31 into all bits of the zero_mask. Thus
