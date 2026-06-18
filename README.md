@@ -9,6 +9,7 @@ Header-only library for conversion to/from half-precision floating point formats
 - Header-only library, no installation or build required
 - Compatible with C99 and C++11
 - Fully covered with unit tests and microbenchmarks
+- GitHub Actions CI also cross-compiles and runs the unit tests for `riscv64` Linux under QEMU
 
 ## Acknowledgements
 

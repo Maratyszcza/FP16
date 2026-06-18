@@ -86,6 +86,21 @@ jobs:
         run: cmake --build build --parallel
       - name: Test
         run: ctest --test-dir build --parallel --output-on-failure
+  cmake-linux-riscv64:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update apt
+        run: sudo apt update
+      - name: Install RISC-V toolchain, QEMU, and Ninja
+        run: sudo apt install ninja-build g++-riscv64-linux-gnu qemu-user-static
+      - name: Configure
+        run: cmake -Bbuild -S. -G Ninja -DCMAKE_BUILD_TYPE=Release -DFP16_BUILD_BENCHMARKS=OFF -DFP16_BUILD_COMPARATIVE_BENCHMARKS=OFF -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=riscv64 -DCMAKE_C_COMPILER=riscv64-linux-gnu-gcc -DCMAKE_CXX_COMPILER=riscv64-linux-gnu-g++ "-DCMAKE_CROSSCOMPILING_EMULATOR=qemu-riscv64-static;-L;/usr/riscv64-linux-gnu"
+      - name: Build
+        run: cmake --build build --parallel
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
   cmake-macos-x86_64:
     runs-on: macos-12
     timeout-minutes: 15
