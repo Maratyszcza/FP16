@@ -9,6 +9,10 @@ OPTION(FP16_BUILD_BENCHMARKS "Build FP16 micro-benchmarks" ON)
 OPTION(FP16_BUILD_COMPARATIVE_BENCHMARKS "Build FP16 micro-benchmarks comparing to alternatives" OFF)
 OPTION(FP16_INSTALL_LIBRARY "Install the FP16 library headers" ON)
 
+OPTION(FP16_USE_SYSTEM_LIBS "Use system libraries instead of downloading and building them" OFF)
+OPTION(FP16_USE_SYSTEM_GOOGLEBENCHMARK "Use system Google Benchmark instead of downloading and building it" ${FP16_USE_SYSTEM_LIBS})
+OPTION(FP16_USE_SYSTEM_GOOGLETEST "Use system Google Test instead of downloading and building it" ${FP16_USE_SYSTEM_LIBS})
+
 # ---[ CMake options
 IF(FP16_BUILD_TESTS OR FP16_BUILD_BENCHMARKS)
   ENABLE_LANGUAGE(CXX)
@@ -19,24 +23,32 @@ IF(FP16_BUILD_TESTS)
 ENDIF()
 
 # ---[ Download deps
-IF(FP16_BUILD_TESTS AND NOT DEFINED GOOGLETEST_SOURCE_DIR)
-  MESSAGE(STATUS "Downloading Google Test to ${CMAKE_BINARY_DIR}/googletest-source (define GOOGLETEST_SOURCE_DIR to avoid it)")
-  CONFIGURE_FILE(cmake/DownloadGoogleTest.cmake "${CMAKE_BINARY_DIR}/googletest-download/CMakeLists.txt")
-  EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googletest-download")
-  EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" --build .
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googletest-download")
-  SET(GOOGLETEST_SOURCE_DIR "${CMAKE_BINARY_DIR}/googletest-source" CACHE STRING "Google Test source directory")
+IF(FP16_BUILD_TESTS) 
+  IF(FP16_USE_SYSTEM_GOOGLETEST)
+    FIND_PACKAGE(GTest REQUIRED)
+  ELSEIF(NOT DEFINED GOOGLETEST_SOURCE_DIR)
+    MESSAGE(STATUS "Downloading Google Test to ${CMAKE_BINARY_DIR}/googletest-source (define GOOGLETEST_SOURCE_DIR to avoid it)")
+    CONFIGURE_FILE(cmake/DownloadGoogleTest.cmake "${CMAKE_BINARY_DIR}/googletest-download/CMakeLists.txt")
+    EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googletest-download")
+    EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" --build .
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googletest-download")
+    SET(GOOGLETEST_SOURCE_DIR "${CMAKE_BINARY_DIR}/googletest-source" CACHE STRING "Google Test source directory")
+  ENDIF()
 ENDIF()
 
-IF(FP16_BUILD_BENCHMARKS AND NOT DEFINED GOOGLEBENCHMARK_SOURCE_DIR)
-  MESSAGE(STATUS "Downloading Google Benchmark to ${CMAKE_BINARY_DIR}/googlebenchmark-source (define GOOGLEBENCHMARK_SOURCE_DIR to avoid it)")
-  CONFIGURE_FILE(cmake/DownloadGoogleBenchmark.cmake "${CMAKE_BINARY_DIR}/googlebenchmark-download/CMakeLists.txt")
-  EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googlebenchmark-download")
-  EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" --build .
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googlebenchmark-download")
-  SET(GOOGLEBENCHMARK_SOURCE_DIR "${CMAKE_BINARY_DIR}/googlebenchmark-source" CACHE STRING "Google Benchmark source directory")
+IF(FP16_BUILD_BENCHMARKS)
+  IF(FP16_USE_SYSTEM_GOOGLEBENCHMARK)
+    FIND_PACKAGE(benchmark REQUIRED)
+  ELSEIF(NOT DEFINED GOOGLEBENCHMARK_SOURCE_DIR)
+    MESSAGE(STATUS "Downloading Google Benchmark to ${CMAKE_BINARY_DIR}/googlebenchmark-source (define GOOGLEBENCHMARK_SOURCE_DIR to avoid it)")
+    CONFIGURE_FILE(cmake/DownloadGoogleBenchmark.cmake "${CMAKE_BINARY_DIR}/googlebenchmark-download/CMakeLists.txt")
+    EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googlebenchmark-download")
+    EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" --build .
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googlebenchmark-download")
+    SET(GOOGLEBENCHMARK_SOURCE_DIR "${CMAKE_BINARY_DIR}/googlebenchmark-source" CACHE STRING "Google Benchmark source directory")
+  ENDIF()
 ENDIF()
 
 # ---[ FP16 library
@@ -56,9 +68,23 @@ IF(FP16_INSTALL_LIBRARY)
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/fp16")
 ENDIF()
 
+INCLUDE(CMakePackageConfigHelpers)
+CONFIGURE_PACKAGE_CONFIG_FILE(
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${CMAKE_PROJECT_NAME}Config.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME}
+)
+
+INSTALL(TARGETS fp16 EXPORT ${CMAKE_PROJECT_NAME}Targets)
+INSTALL(EXPORT ${CMAKE_PROJECT_NAME}Targets
+  FILE ${CMAKE_PROJECT_NAME}Config.cmake
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME}
+)
+INSTALL(DIRECTORY include/ DESTINATION include)
+
 IF(FP16_BUILD_TESTS)
   # ---[ Build google test
-  IF(NOT TARGET gtest)
+  IF(NOT TARGET gtest AND NOT FP16_USE_SYSTEM_GOOGLETEST)
     SET(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
     ADD_SUBDIRECTORY(
       "${GOOGLETEST_SOURCE_DIR}"
@@ -131,7 +157,7 @@ ENDIF()
 
 IF(FP16_BUILD_BENCHMARKS)
   # ---[ Build google benchmark
-  IF(NOT TARGET benchmark)
+  IF(NOT TARGET benchmark AND NOT FP16_USE_SYSTEM_GOOGLEBENCHMARK)
     SET(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "")
     ADD_SUBDIRECTORY(
       "${GOOGLEBENCHMARK_SOURCE_DIR}"
